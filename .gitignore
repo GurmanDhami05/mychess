@@ -1,0 +1,16 @@
+# Build directory
+build/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Compilation database (optional)
+compile_commands.json
+
+# Vim/Neovim
+*.swp
+*.swo
+
