@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mygame/constants.h"
+#include "mygame/game.h"
 #include <SDL2/SDL.h>
 
 struct PieceSelected {
@@ -12,5 +13,5 @@ struct PieceSelected {
 void handleLeftClick(int mouseX,
                      int mouseY,
                      int board[BOARD_SIZE][BOARD_SIZE],
-                     SDL_Event event,
-                     PieceSelected &selection);
+                     PieceSelected &selection,
+                     Turn &currentTurn);

@@ -14,6 +14,8 @@ add_executable(chess
     src/mygame/sdl.cpp
     src/mygame/textures.cpp
     src/mygame/input.cpp
+    src/mygame/game.cpp
+    src/mygame/rules.cpp
 )
 
 target_include_directories(chess PRIVATE include)

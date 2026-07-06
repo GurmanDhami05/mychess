@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "mygame/board.h"
+#include "mygame/game.h"
 #include "mygame/input.h"
 #include "mygame/renderer.h"
 #include "mygame/sdl.h"
@@ -48,6 +49,8 @@ int main() {
 
     PieceSelected selection;
 
+    Turn currentTurn = Turn::White;
+
     bool isRunning = true;
     SDL_Event event;
 
@@ -63,7 +66,7 @@ int main() {
                 int mouseX = event.button.x;
                 int mouseY = event.button.y;
 
-                handleLeftClick(mouseX, mouseY, board, event, selection);
+                handleLeftClick(mouseX, mouseY, board, selection, currentTurn);
             }
         }
 

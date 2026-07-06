@@ -1,0 +1,25 @@
+#include "mygame/game.h"
+#include "mygame/move.h"
+
+bool isPlayerPiece(int piece, Turn currentTurn) {
+    if (piece == EMPTY) {
+        return false;
+    }
+    if (currentTurn == Turn::White) {
+        return piece > 0;
+    }
+    return piece < 0;
+}
+
+void switchTurn(Turn &currentTurn) {
+    if (currentTurn == Turn::White) {
+        currentTurn = Turn::Black;
+    } else {
+        currentTurn = Turn::White;
+    }
+}
+
+void movePiece(int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
+    board[move.toRow][move.toCol] = board[move.fromRow][move.fromCol];
+    board[move.fromRow][move.fromCol] = EMPTY;
+}
