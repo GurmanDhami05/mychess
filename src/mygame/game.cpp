@@ -11,6 +11,10 @@ bool isPlayerPiece(int piece, Turn currentTurn) {
     return piece < 0;
 }
 
+bool isEnemyPiece(int fromPiece, int toPiece) {
+    return ((fromPiece > 0 && toPiece < 0) || (fromPiece < 0 && toPiece > 0));
+}
+
 void switchTurn(Turn &currentTurn) {
     if (currentTurn == Turn::White) {
         currentTurn = Turn::Black;

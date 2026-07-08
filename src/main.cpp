@@ -70,7 +70,7 @@ int main() {
             }
         }
 
-        render(renderer, textures, board);
+        render(renderer, textures, board, selection);
     }
 
     destroyTextures(textures);
