@@ -16,6 +16,8 @@ add_executable(chess
     src/mygame/input.cpp
     src/mygame/game.cpp
     src/mygame/rules.cpp
+    src/mygame/check.cpp
+    src/mygame/board_state.cpp
 )
 
 target_include_directories(chess PRIVATE include)

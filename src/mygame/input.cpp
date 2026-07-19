@@ -1,28 +1,48 @@
 #include "mygame/input.h"
+#include "mygame/board_state.h"
+#include "mygame/check.h"
 #include "mygame/game.h"
 #include "mygame/rules.h"
 
-void handleLeftClick(int mouseX,
-                     int mouseY,
-                     int board[BOARD_SIZE][BOARD_SIZE],
-                     PieceSelected &selection,
-                     Turn &currentTurn) {
+bool handleClick(int mouseX,
+                 int mouseY,
+                 int board[BOARD_SIZE][BOARD_SIZE],
+                 Turn &currentTurn,
+                 BoardState &state)
+{
 
-    int col = mouseX / TILE_SIZE;
-    int row = mouseY / TILE_SIZE;
+    Position clicked{ mouseY / TILE_SIZE, mouseX / TILE_SIZE };
 
-    int piece = board[row][col];
+    int piece = board[clicked.row][clicked.col];
 
-    if (!isPlayerPiece(piece, currentTurn) && selection.selected) {
-        Move move{ selection.row, selection.col, row, col };
-        if (isMoveLegal(board, move)) {
-            movePiece(board, move);
-            selection.selected = false;
-            switchTurn(currentTurn);
+    // if the second clicked piece is not playerpiece and there is a piece
+    // already slected
+    if (!isPlayerPiece(piece, currentTurn) && state.selection.selected)
+    {
+        Move move{ state.selection.position, clicked };
+        if (!(isMoveLegal(board, move)))
+        {
+            return false;
         }
-    } else if (isPlayerPiece(piece, currentTurn)) {
-        selection.selected = true;
-        selection.row = row;
-        selection.col = col;
+
+        int capturedPiece = board[move.to.row][move.to.col];
+        movePiece(board, move);
+
+        if (isKingInCheck(board, currentTurn))
+        {
+            undoMove(board, move, capturedPiece);
+            return false;
+        }
+
+        state.selection.selected = false;
+        switchTurn(currentTurn);
+        return true;
     }
+    // if no piece is selected then first click
+    else if (isPlayerPiece(piece, currentTurn))
+    {
+        state.selection.selected = true;
+        state.selection.position = clicked;
+    }
+    return false;
 }

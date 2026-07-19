@@ -1,8 +1,8 @@
 #pragma once
 
+#include "mygame/position.h"
+
 struct Move {
-    int fromRow;
-    int fromCol;
-    int toRow;
-    int toCol;
+    Position from;
+    Position to;
 };

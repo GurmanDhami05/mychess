@@ -21,14 +21,22 @@ const std::array<std::string, 13> piecesLUT = {
 
 int pieceToIndex(int piece) { return piece + 6; }
 
-void initializeBoard(int board[BOARD_SIZE][BOARD_SIZE]) {
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
-            if (row == 1) {
+void initializeBoard(int board[BOARD_SIZE][BOARD_SIZE])
+{
+    for (int row = 0; row < BOARD_SIZE; row++)
+    {
+        for (int col = 0; col < BOARD_SIZE; col++)
+        {
+            if (row == 1)
+            {
                 board[row][col] = -1;
-            } else if (row == 6) {
+            }
+            else if (row == 6)
+            {
                 board[row][col] = 1;
-            } else {
+            }
+            else
+            {
                 board[row][col] = EMPTY;
             }
         }
@@ -55,9 +63,12 @@ void initializeBoard(int board[BOARD_SIZE][BOARD_SIZE]) {
     board[7][7] = 2; // w_rook
 }
 
-void printBoard(const int board[BOARD_SIZE][BOARD_SIZE]) {
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
+void printBoard(const int board[BOARD_SIZE][BOARD_SIZE])
+{
+    for (int row = 0; row < BOARD_SIZE; row++)
+    {
+        for (int col = 0; col < BOARD_SIZE; col++)
+        {
             std::cout << board[row][col] << "\t";
         }
         std::cout << std::endl;

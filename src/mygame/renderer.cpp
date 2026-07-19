@@ -1,38 +1,67 @@
 #include "mygame/renderer.h"
 #include "mygame/board.h"
-#include "mygame/input.h"
+#include "mygame/board_state.h"
+#include "mygame/piece_selected.h"
 
 void render(SDL_Renderer *renderer,
             const Textures &textures,
             const int board[BOARD_SIZE][BOARD_SIZE],
-            const PieceSelected &selection) {
+            const BoardState &state)
+{
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     // drawing chess board
-    drawBoard(renderer, selection);
+    drawBoard(renderer, state);
     drawPieces(renderer, textures, board);
 
     SDL_RenderPresent(renderer);
 }
 
-void drawBoard(SDL_Renderer *renderer, const PieceSelected &selection) {
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
-            bool isSelected = selection.selected && row == selection.row &&
-                              col == selection.col;
-            if ((row + col) % 2 == 0) {
-                if (isSelected) {
+void drawBoard(SDL_Renderer *renderer, const BoardState &state)
+{
+    for (int row = 0; row < BOARD_SIZE; row++)
+    {
+        for (int col = 0; col < BOARD_SIZE; col++)
+        {
+            bool isSelected = state.selection.selected &&
+                              row == state.selection.position.row &&
+                              col == state.selection.position.col;
+            bool isWhiteKingSquare = state.whiteKing.inCheck &&
+                                     row == state.whiteKing.position.row &&
+                                     col == state.whiteKing.position.col;
+            bool isBlackKingSquare = state.blackKing.inCheck &&
+                                     row == state.blackKing.position.row &&
+                                     col == state.blackKing.position.col;
+            bool kingInCheck = isWhiteKingSquare || isBlackKingSquare;
+            if ((row + col) % 2 == 0)
+            {
+                if (kingInCheck)
+                {
+                    SDL_SetRenderDrawColor(renderer, 170, 82, 82, 255);
+                }
+                else if (isSelected)
+                {
                     SDL_SetRenderDrawColor(renderer, 96, 145, 109, 255);
-                } else {
+                }
+                else
+                {
                     SDL_SetRenderDrawColor(renderer, 74, 117, 89, 255);
                 }
+            }
+            else
+            {
 
-            } else {
-
-                if (isSelected) {
+                if (kingInCheck)
+                {
+                    SDL_SetRenderDrawColor(renderer, 170, 82, 82, 255);
+                }
+                else if (isSelected)
+                {
                     SDL_SetRenderDrawColor(renderer, 255, 235, 156, 255);
-                } else {
+                }
+                else
+                {
                     SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255);
                 }
             }
@@ -48,13 +77,17 @@ void drawBoard(SDL_Renderer *renderer, const PieceSelected &selection) {
 
 void drawPieces(SDL_Renderer *renderer,
                 const Textures &textures,
-                const int board[BOARD_SIZE][BOARD_SIZE]) {
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
+                const int board[BOARD_SIZE][BOARD_SIZE])
+{
+    for (int row = 0; row < BOARD_SIZE; row++)
+    {
+        for (int col = 0; col < BOARD_SIZE; col++)
+        {
 
             int piece = board[row][col];
 
-            if (piece == EMPTY) {
+            if (piece == EMPTY)
+            {
                 continue;
             }
 
@@ -65,7 +98,8 @@ void drawPieces(SDL_Renderer *renderer,
             SDL_Texture *pieceTexture =
                 textures.pieceTextures[pieceToIndex(piece)];
 
-            if (pieceTexture == nullptr) {
+            if (pieceTexture == nullptr)
+            {
                 continue;
             }
 

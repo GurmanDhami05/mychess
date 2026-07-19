@@ -5,52 +5,54 @@
 #include <cstdlib>
 
 bool isHorizontalOrVertical(const Move &move) {
-    return (move.fromCol == move.toCol || move.fromRow == move.toRow);
+    return (move.from.col == move.to.col || move.from.row == move.to.row);
 }
 
 bool isPathClear(const int board[BOARD_SIZE][BOARD_SIZE],
                  const Move &move,
                  const int rowStep,
                  const int colStep) {
-    int currentRow = move.fromRow + rowStep;
-    int currentCol = move.fromCol + colStep;
-    while (!(currentCol == move.toCol && currentRow == move.toRow)) {
-        if (board[currentRow][currentCol] != EMPTY) {
+    Position current{ move.from.row + rowStep, move.from.col + colStep };
+
+    while (!(current.col == move.to.col && current.row == move.to.row)) {
+        if (board[current.row][current.col] != EMPTY) {
             return false;
         }
-        currentRow += rowStep;
-        currentCol += colStep;
+        current.row += rowStep;
+        current.col += colStep;
     }
     return true;
 }
 
 bool isDiagonal(const Move &move) {
-    int rowDiff = move.toRow - move.fromRow;
-    int colDiff = move.toCol - move.fromCol;
+    int rowDiff = move.to.row - move.from.row;
+    int colDiff = move.to.col - move.from.col;
     return (abs(rowDiff) == abs(colDiff));
 }
 
 bool isPawnMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
-    int fromPiece = board[move.fromRow][move.fromCol];
-    int toPiece = board[move.toRow][move.toCol];
+    int fromPiece = board[move.from.row][move.from.col];
+    int toPiece = board[move.to.row][move.to.col];
 
     int direction = (fromPiece > 0) ? -1 : 1;
     int startRow = (fromPiece > 0) ? 6 : 1;
 
     // one square forward
-    if (move.toRow == move.fromRow + direction && move.toCol == move.fromCol) {
-        return (board[move.toRow][move.toCol] == EMPTY);
+    if (move.to.row == move.from.row + direction &&
+        move.to.col == move.from.col) {
+        return (board[move.to.row][move.to.col] == EMPTY);
     }
     // initial two-square forward
-    if (move.toRow == move.fromRow + 2 * direction &&
-        move.toCol == move.fromCol) {
-        return (board[move.toRow][move.toCol] == EMPTY &&
-                board[move.fromRow + direction][move.toCol] == EMPTY &&
-                move.fromRow == startRow);
+    if (move.to.row == move.from.row + 2 * direction &&
+        move.to.col == move.from.col) {
+        return (board[move.to.row][move.to.col] == EMPTY &&
+                board[move.from.row + direction][move.to.col] == EMPTY &&
+                move.from.row == startRow);
     }
     // diagonal capture
-    if (move.toRow == move.fromRow + direction &&
-        (move.toCol == move.fromCol - 1 || move.toCol == move.fromCol + 1)) {
+    if (move.to.row == move.from.row + direction &&
+        (move.to.col == move.from.col - 1 ||
+         move.to.col == move.from.col + 1)) {
         return (isEnemyPiece(fromPiece, toPiece));
     }
 
@@ -58,11 +60,11 @@ bool isPawnMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
 }
 
 bool isRookMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
-    int fromPiece = board[move.fromRow][move.fromCol];
-    int toPiece = board[move.toRow][move.toCol];
+    int fromPiece = board[move.from.row][move.from.col];
+    int toPiece = board[move.to.row][move.to.col];
 
-    int rowDiff = move.toRow - move.fromRow;
-    int colDiff = move.toCol - move.fromCol;
+    int rowDiff = move.to.row - move.from.row;
+    int colDiff = move.to.col - move.from.col;
 
     int rowStep = ((rowDiff > 0) - (rowDiff < 0));
     int colStep = ((colDiff > 0) - (colDiff < 0));
@@ -73,17 +75,17 @@ bool isRookMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
     if (!isPathClear(board, move, rowStep, colStep)) {
         return false;
     }
-    return (board[move.toRow][move.toCol] == EMPTY ||
+    return (board[move.to.row][move.to.col] == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isBishopMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
 
-    int fromPiece = board[move.fromRow][move.fromCol];
-    int toPiece = board[move.toRow][move.toCol];
+    int fromPiece = board[move.from.row][move.from.col];
+    int toPiece = board[move.to.row][move.to.col];
 
-    int rowDiff = move.toRow - move.fromRow;
-    int colDiff = move.toCol - move.fromCol;
+    int rowDiff = move.to.row - move.from.row;
+    int colDiff = move.to.col - move.from.col;
 
     int rowStep = ((rowDiff > 0) - (rowDiff < 0));
     int colStep = ((colDiff > 0) - (colDiff < 0));
@@ -94,7 +96,7 @@ bool isBishopMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
     if (!isPathClear(board, move, rowStep, colStep)) {
         return false;
     }
-    return (board[move.toRow][move.toCol] == EMPTY ||
+    return (board[move.to.row][move.to.col] == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
@@ -103,36 +105,36 @@ bool isQueenMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
 }
 
 bool isKnightMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
-    int fromPiece = board[move.fromRow][move.fromCol];
-    int toPiece = board[move.toRow][move.toCol];
+    int fromPiece = board[move.from.row][move.from.col];
+    int toPiece = board[move.to.row][move.to.col];
 
-    int rowDiff = abs(move.toRow - move.fromRow);
-    int colDiff = abs(move.toCol - move.fromCol);
+    int rowDiff = abs(move.to.row - move.from.row);
+    int colDiff = abs(move.to.col - move.from.col);
 
     if (!((rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2))) {
         return false;
     }
-    return (board[move.toRow][move.toCol] == EMPTY ||
+    return (board[move.to.row][move.to.col] == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isKingMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
-    int fromPiece = board[move.fromRow][move.fromCol];
-    int toPiece = board[move.toRow][move.toCol];
+    int fromPiece = board[move.from.row][move.from.col];
+    int toPiece = board[move.to.row][move.to.col];
 
-    int rowDiff = abs(move.toRow - move.fromRow);
-    int colDiff = abs(move.toCol - move.fromCol);
+    int rowDiff = abs(move.to.row - move.from.row);
+    int colDiff = abs(move.to.col - move.from.col);
 
     if (!(rowDiff <= 1 && colDiff <= 1)) {
         return false;
     }
 
-    return (board[move.toRow][move.toCol] == EMPTY ||
+    return (board[move.to.row][move.to.col] == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isMoveLegal(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
-    int piece = board[move.fromRow][move.fromCol];
+    int piece = board[move.from.row][move.from.col];
     switch (abs(piece)) {
     case 1:
         return isPawnMove(board, move);

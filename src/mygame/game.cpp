@@ -24,6 +24,13 @@ void switchTurn(Turn &currentTurn) {
 }
 
 void movePiece(int board[BOARD_SIZE][BOARD_SIZE], const Move &move) {
-    board[move.toRow][move.toCol] = board[move.fromRow][move.fromCol];
-    board[move.fromRow][move.fromCol] = EMPTY;
+    board[move.to.row][move.to.col] = board[move.from.row][move.from.col];
+    board[move.from.row][move.from.col] = EMPTY;
+}
+
+void undoMove(int board[BOARD_SIZE][BOARD_SIZE],
+              const Move &move,
+              int capturedPiece) {
+    board[move.from.row][move.from.col] = board[move.to.row][move.to.col];
+    board[move.to.row][move.to.col] = capturedPiece;
 }

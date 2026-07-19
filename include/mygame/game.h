@@ -8,3 +8,6 @@ bool isPlayerPiece(int piece, Turn currentTurn);
 void switchTurn(Turn &currentTurn);
 void movePiece(int board[BOARD_SIZE][BOARD_SIZE], const Move &move);
 bool isEnemyPiece(int fromPiece, int toPiece);
+void undoMove(int board[BOARD_SIZE][BOARD_SIZE],
+              const Move &move,
+              int capturedPiece);

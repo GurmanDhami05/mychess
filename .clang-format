@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+BreakBeforeBraces: Allman
+AlwaysBreakAfterReturnType: None
+AlignAfterOpenBracket: Align
+BinPackArguments: false
+BinPackParameters: false
+Cpp11BracedListStyle: false
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
