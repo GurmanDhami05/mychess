@@ -16,13 +16,20 @@ void render(SDL_Renderer *renderer,
     drawBoard(renderer, state);
     drawPieces(renderer, textures, board);
 
-    if (state.checkmate)
+    static bool printed = false;
+
+    if (!printed)
     {
-        std::cout << "Checkmate!" << std::endl;
-    }
-    else if (state.stalemate)
-    {
-        std::cout << "Stalemate!" << std::endl;
+        if (state.checkmate)
+        {
+            std::cout << "Checkmate!\n";
+            printed = true;
+        }
+        else if (state.stalemate)
+        {
+            std::cout << "Stalemate!\n";
+            printed = true;
+        }
     }
 
     SDL_RenderPresent(renderer);
