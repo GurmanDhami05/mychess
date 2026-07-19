@@ -2,6 +2,7 @@
 #include "mygame/board.h"
 #include "mygame/board_state.h"
 #include "mygame/piece_selected.h"
+#include <iostream>
 
 void render(SDL_Renderer *renderer,
             const Textures &textures,
@@ -14,6 +15,22 @@ void render(SDL_Renderer *renderer,
     // drawing chess board
     drawBoard(renderer, state);
     drawPieces(renderer, textures, board);
+
+    static bool printed = false;
+
+    if (!printed)
+    {
+        if (state.checkmate)
+        {
+            std::cout << "Checkmate!\n";
+            printed = true;
+        }
+        else if (state.stalemate)
+        {
+            std::cout << "Stalemate!\n";
+            printed = true;
+        }
+    }
 
     SDL_RenderPresent(renderer);
 }

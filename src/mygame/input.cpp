@@ -44,5 +44,11 @@ bool handleClick(int mouseX,
         state.selection.selected = true;
         state.selection.position = clicked;
     }
+
+    if (state.checkmate || state.stalemate)
+    {
+        return false;
+    }
+
     return false;
 }

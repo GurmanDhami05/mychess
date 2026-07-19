@@ -55,10 +55,10 @@ int main()
     }
 
     BoardState state{};
-    updateBoardState(state, board);
 
     Turn currentTurn = Turn::White;
 
+    updateBoardState(state, board, currentTurn);
     bool isRunning = true;
     SDL_Event event;
 
@@ -80,7 +80,7 @@ int main()
 
                 if (handleClick(mouseX, mouseY, board, currentTurn, state))
                 {
-                    updateBoardState(state, board);
+                    updateBoardState(state, board, currentTurn);
                 }
             }
         }

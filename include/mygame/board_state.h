@@ -1,6 +1,7 @@
 
 #pragma once
 #include "mygame/constants.h"
+#include "mygame/game.h"
 #include "mygame/piece_selected.h"
 #include "mygame/position.h"
 
@@ -16,7 +17,11 @@ struct BoardState
 
     KingState whiteKing;
     KingState blackKing;
+
+    bool checkmate = false;
+    bool stalemate = false;
 };
 
 void updateBoardState(BoardState &state,
-                      const int board[BOARD_SIZE][BOARD_SIZE]);
+                      int board[BOARD_SIZE][BOARD_SIZE],
+                      Turn currentTurn);
