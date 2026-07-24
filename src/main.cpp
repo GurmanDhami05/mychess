@@ -3,7 +3,6 @@
 
 #include "mygame/board.h"
 #include "mygame/board_state.h"
-#include "mygame/game.h"
 #include "mygame/input.h"
 #include "mygame/renderer.h"
 #include "mygame/sdl.h"
@@ -14,6 +13,8 @@ int main()
 
     int board[BOARD_SIZE][BOARD_SIZE];
     initializeBoard(board);
+
+    // printBoard(board);
 
     if (!initializeSDL())
     {

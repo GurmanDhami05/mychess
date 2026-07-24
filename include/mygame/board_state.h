@@ -1,14 +1,27 @@
 
 #pragma once
 #include "mygame/constants.h"
-#include "mygame/game.h"
 #include "mygame/piece_selected.h"
 #include "mygame/position.h"
+#include "mygame/turn.h"
 
 struct KingState
 {
     Position position;
     bool inCheck;
+};
+
+struct CastlingRights
+{
+    bool whiteKingMoved = false;
+
+    bool whiteKingsideRookMoved = false;
+    bool whiteQueensideRookMoved = false;
+
+    bool blackKingMoved = false;
+
+    bool blackKingsideRookMoved = false;
+    bool blackQueensideRookMoved = false;
 };
 
 struct BoardState
@@ -20,6 +33,8 @@ struct BoardState
 
     bool checkmate = false;
     bool stalemate = false;
+
+    CastlingRights castling;
 };
 
 void updateBoardState(BoardState &state,

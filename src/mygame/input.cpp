@@ -15,25 +15,48 @@ bool handleClick(int mouseX,
 
     int piece = board[clicked.row][clicked.col];
 
-    // if the second clicked piece is not playerpiece and there is a piece
-    // already slected
     if (!isPlayerPiece(piece, currentTurn) && state.selection.selected)
     {
         Move move{ state.selection.position, clicked };
-        if (!(isMoveLegal(board, move)))
+        int movedPiece = board[move.from.row][move.from.col];
+
+        bool castling = false;
+
+        if (abs(movedPiece) == 6)
+        {
+            castling = canCastle(board, move, state);
+        }
+
+        if (!castling && !isMoveLegal(board, move))
         {
             return false;
         }
 
         int capturedPiece = board[move.to.row][move.to.col];
-        movePiece(board, move);
+
+        if (castling)
+        {
+            performCastle(board, move);
+        }
+        else
+        {
+            movePiece(board, move);
+        }
 
         if (isKingInCheck(board, currentTurn))
         {
-            undoMove(board, move, capturedPiece);
+            if (castling)
+            {
+                undoCastle(board, move);
+            }
+            else
+            {
+                undoMove(board, move, capturedPiece);
+            }
             return false;
         }
 
+        updateCastlingRights(move, movedPiece, state);
         state.selection.selected = false;
         switchTurn(currentTurn);
         return true;
