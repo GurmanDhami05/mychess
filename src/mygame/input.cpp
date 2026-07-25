@@ -3,6 +3,7 @@
 #include "mygame/check.h"
 #include "mygame/game.h"
 #include "mygame/rules.h"
+#include <iostream>
 
 bool handleClick(int mouseX,
                  int mouseY,
@@ -10,6 +11,11 @@ bool handleClick(int mouseX,
                  Turn &currentTurn,
                  BoardState &state)
 {
+
+    if (state.checkmate || state.stalemate)
+    {
+        return false;
+    }
 
     Position clicked{ mouseY / TILE_SIZE, mouseX / TILE_SIZE };
 
@@ -21,22 +27,39 @@ bool handleClick(int mouseX,
         int movedPiece = board[move.from.row][move.from.col];
 
         bool castling = false;
+        bool enPassant = false;
+        int capturedPiece;
 
         if (abs(movedPiece) == 6)
         {
             castling = canCastle(board, move, state);
         }
+        if (abs(movedPiece) == 1)
+        {
+            enPassant = canEnPassant(board, move, state);
+        }
 
-        if (!castling && !isMoveLegal(board, move))
+        if (enPassant)
+        {
+            capturedPiece = board[move.from.row][move.to.col];
+        }
+        else
+        {
+            capturedPiece = board[move.to.row][move.to.col];
+        }
+
+        if (!castling && !isMoveLegal(board, move) && !enPassant)
         {
             return false;
         }
 
-        int capturedPiece = board[move.to.row][move.to.col];
-
         if (castling)
         {
             performCastle(board, move);
+        }
+        else if (enPassant)
+        {
+            performEnPassant(board, move);
         }
         else
         {
@@ -49,6 +72,10 @@ bool handleClick(int mouseX,
             {
                 undoCastle(board, move);
             }
+            else if (enPassant)
+            {
+                undoEnPassant(board, move, capturedPiece);
+            }
             else
             {
                 undoMove(board, move, capturedPiece);
@@ -57,6 +84,7 @@ bool handleClick(int mouseX,
         }
 
         updateCastlingRights(move, movedPiece, state);
+        updateEnPassantTarget(move, movedPiece, state);
         state.selection.selected = false;
         switchTurn(currentTurn);
         return true;
@@ -66,11 +94,6 @@ bool handleClick(int mouseX,
     {
         state.selection.selected = true;
         state.selection.position = clicked;
-    }
-
-    if (state.checkmate || state.stalemate)
-    {
-        return false;
     }
 
     return false;

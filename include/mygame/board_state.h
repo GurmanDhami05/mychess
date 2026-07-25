@@ -35,6 +35,8 @@ struct BoardState
     bool stalemate = false;
 
     CastlingRights castling;
+
+    Position enPassantTarget = { -1, -1 };
 };
 
 void updateBoardState(BoardState &state,

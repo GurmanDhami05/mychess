@@ -15,3 +15,6 @@ bool isKingMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move);
 bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
                const Move &move,
                const BoardState &state);
+bool canEnPassant(const int board[BOARD_SIZE][BOARD_SIZE],
+                  const Move &move,
+                  const BoardState &state);

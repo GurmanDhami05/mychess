@@ -144,6 +144,52 @@ bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
     return false;
 }
 
+bool canEnPassant(const int board[BOARD_SIZE][BOARD_SIZE],
+                  const Move &move,
+                  const BoardState &state)
+{
+    int fromPiece = board[move.from.row][move.from.col];
+    int toPiece = board[move.to.row][move.to.col];
+
+    if (abs(fromPiece) != 1)
+    {
+        return false;
+    }
+
+    if (state.enPassantTarget.row == -1 || state.enPassantTarget.col == -1)
+    {
+        return false;
+    }
+
+    if (move.to.row != state.enPassantTarget.row ||
+        move.to.col != state.enPassantTarget.col)
+    {
+        return false;
+    }
+    if (toPiece != EMPTY)
+    {
+        return false;
+    }
+
+    int direction = (fromPiece > 0) ? -1 : 1;
+    if (move.to.row != move.from.row + direction ||
+        abs(move.to.col - move.from.col) != 1)
+    {
+        return false;
+    }
+
+    int capturedPawnRow = move.from.row;
+    int capturedPawnCol = move.to.col;
+    int capturedPawn = board[capturedPawnRow][capturedPawnCol];
+
+    if (!isEnemyPiece(fromPiece, capturedPawn) || abs(capturedPawn) != 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool isPawnMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
 {
     int fromPiece = board[move.from.row][move.from.col];

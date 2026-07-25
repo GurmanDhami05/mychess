@@ -14,3 +14,8 @@ void undoMove(int board[BOARD_SIZE][BOARD_SIZE],
 void updateCastlingRights(const Move &move, int movedPiece, BoardState &state);
 void performCastle(int board[BOARD_SIZE][BOARD_SIZE], const Move &KingMove);
 void undoCastle(int board[BOARD_SIZE][BOARD_SIZE], const Move &KingMove);
+void updateEnPassantTarget(const Move &move, int movedPiece, BoardState &state);
+void performEnPassant(int board[BOARD_SIZE][BOARD_SIZE], const Move &move);
+void undoEnPassant(int board[BOARD_SIZE][BOARD_SIZE],
+                   const Move &move,
+                   int capturedPawn);

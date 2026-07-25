@@ -1,6 +1,7 @@
 #include "mygame/game.h"
 #include "mygame/board_state.h"
 #include "mygame/move.h"
+#include <cstdlib>
 
 bool isPlayerPiece(int piece, Turn currentTurn)
 {
@@ -111,4 +112,43 @@ void undoCastle(int board[BOARD_SIZE][BOARD_SIZE], const Move &kingMove)
         Move rookMove{ { row, 3 }, { row, 0 } };
         undoMove(board, rookMove, EMPTY);
     }
+}
+
+void updateEnPassantTarget(const Move &move, int movedPiece, BoardState &state)
+{
+    if (abs(movedPiece) == 1 && abs(move.to.row - move.from.row) == 2)
+    {
+        state.enPassantTarget.row = (move.from.row + move.to.row) / 2;
+        state.enPassantTarget.col = move.from.col;
+    }
+    else
+    {
+        state.enPassantTarget = { -1, -1 };
+    }
+}
+
+void performEnPassant(int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+{
+    int capturedPawnRow = move.from.row;
+    int capturedPawnCol = move.to.col;
+
+    // Move the pawn
+    movePiece(board, move);
+
+    // Remove the captured pawn
+    board[capturedPawnRow][capturedPawnCol] = EMPTY;
+}
+
+void undoEnPassant(int board[BOARD_SIZE][BOARD_SIZE],
+                   const Move &move,
+                   int capturedPawn)
+{
+    int capturedPawnRow = move.from.row;
+    int capturedPawnCol = move.to.col;
+
+    // Undo the pawn's move
+    undoMove(board, move, EMPTY);
+
+    // Restore the captured pawn
+    board[capturedPawnRow][capturedPawnCol] = capturedPawn;
 }
