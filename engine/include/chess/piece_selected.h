@@ -1,8 +1,9 @@
 #pragma once
 
-#include "mygame/position.h"
+#include "chess/position.h"
 
-struct PieceSelected {
+struct PieceSelected
+{
     bool selected = false;
     Position position;
 };

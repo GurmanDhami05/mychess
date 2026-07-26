@@ -1,7 +1,7 @@
 #pragma once
-#include "mygame/constants.h"
-#include "mygame/game.h"
-#include "mygame/position.h"
+#include "chess/constants.h"
+#include "chess/game.h"
+#include "chess/position.h"
 
 Position getKingPosition(const int board[BOARD_SIZE][BOARD_SIZE],
                          Turn kingTurn);

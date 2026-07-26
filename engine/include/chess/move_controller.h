@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mygame/board_state.h"
-#include "mygame/constants.h"
-#include "mygame/game.h"
+#include "chess/board_state.h"
+#include "chess/constants.h"
+#include "chess/game.h"
 #include <SDL2/SDL.h>
 
 bool handleClick(int mouseX,

@@ -1,9 +1,8 @@
-
 #pragma once
-#include "mygame/constants.h"
-#include "mygame/piece_selected.h"
-#include "mygame/position.h"
-#include "mygame/turn.h"
+#include "chess/constants.h"
+#include "chess/piece_selected.h"
+#include "chess/position.h"
+#include "chess/turn.h"
 #include <vector>
 
 struct KingState

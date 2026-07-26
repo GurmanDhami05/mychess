@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mygame/board_state.h"
-#include "mygame/constants.h"
-#include "mygame/move.h"
+#include "chess/board_state.h"
+#include "chess/constants.h"
+#include "chess/move.h"
 
 bool isMoveLegal(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move);
 

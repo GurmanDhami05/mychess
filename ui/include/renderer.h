@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mygame/board_state.h"
-#include "mygame/constants.h"
-#include "mygame/textures.h"
+#include "chess/board_state.h"
+#include "chess/constants.h"
+#include "textures.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

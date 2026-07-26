@@ -1,8 +1,8 @@
-#include "mygame/checkmate.h"
-#include "mygame/check.h"
-#include "mygame/game.h"
-#include "mygame/move.h"
-#include "mygame/rules.h"
+#include "chess/checkmate.h"
+#include "chess/check.h"
+#include "chess/game.h"
+#include "chess/move.h"
+#include "chess/rules.h"
 
 bool hasLegalMove(int board[BOARD_SIZE][BOARD_SIZE], Turn side)
 {

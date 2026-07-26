@@ -78,8 +78,8 @@ cmake --build build
 ### Gameplay
 
 - [ ] Promotion piece selection
-- [ ] Move highlighting
-- [ ] Legal move indicators
+- [x] Move highlighting
+- [x] Legal move indicators
 - [ ] Move history
 - [ ] Undo / Redo
 

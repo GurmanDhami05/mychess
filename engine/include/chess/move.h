@@ -1,8 +1,9 @@
 #pragma once
 
-#include "mygame/position.h"
+#include "chess/position.h"
 
-struct Move {
+struct Move
+{
     Position from;
     Position to;
 };

@@ -1,10 +1,10 @@
-#include "mygame/input.h"
-#include "mygame/board_state.h"
-#include "mygame/check.h"
-#include "mygame/game.h"
-#include "mygame/legal_moves.h"
-#include "mygame/promotion.h"
-#include "mygame/rules.h"
+#include "chess/move_controller.h"
+#include "chess/board_state.h"
+#include "chess/check.h"
+#include "chess/game.h"
+#include "chess/legal_moves.h"
+#include "chess/promotion.h"
+#include "chess/rules.h"
 
 bool handleClick(int mouseX,
                  int mouseY,

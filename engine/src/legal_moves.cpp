@@ -1,9 +1,9 @@
-#include "mygame/legal_moves.h"
-#include "mygame/board_state.h"
-#include "mygame/check.h"
-#include "mygame/game.h"
-#include "mygame/move.h"
-#include "mygame/rules.h"
+#include "chess/legal_moves.h"
+#include "chess/board_state.h"
+#include "chess/check.h"
+#include "chess/game.h"
+#include "chess/move.h"
+#include "chess/rules.h"
 #include <cstdlib>
 #include <vector>
 

@@ -1,11 +1,12 @@
-#include "mygame/textures.h"
-#include "mygame/board.h"
+#include "textures.h"
+#include "chess/board.h"
 
 #include <SDL2/SDL_image.h>
 #include <array>
 #include <iostream>
 
-void loadTextures(Textures &textures, SDL_Renderer *renderer) {
+void loadTextures(Textures &textures, SDL_Renderer *renderer)
+{
     textures.pieceTextures[0] =
         IMG_LoadTexture(renderer, "./assets/Chess_kdt60.png"); // black_king
     textures.pieceTextures[1] =
@@ -35,12 +36,16 @@ void loadTextures(Textures &textures, SDL_Renderer *renderer) {
         IMG_LoadTexture(renderer, "./assets/Chess_klt60.png"); // white_king
 }
 
-bool checkTexture(const Textures &textures) {
-    for (int i = 0; i < textures.pieceTextures.size(); i++) {
-        if (i == 6) {
+bool checkTexture(const Textures &textures)
+{
+    for (int i = 0; i < textures.pieceTextures.size(); i++)
+    {
+        if (i == 6)
+        {
             continue;
         }
-        if (textures.pieceTextures[i] == nullptr) {
+        if (textures.pieceTextures[i] == nullptr)
+        {
 
             std::cerr << "texture failed to load at index: " << piecesLUT[i]
                       << std::endl;
@@ -50,9 +55,12 @@ bool checkTexture(const Textures &textures) {
     return true;
 }
 
-void destroyTextures(Textures &textures) {
-    for (SDL_Texture *texture : textures.pieceTextures) {
-        if (texture != nullptr) {
+void destroyTextures(Textures &textures)
+{
+    for (SDL_Texture *texture : textures.pieceTextures)
+    {
+        if (texture != nullptr)
+        {
             SDL_DestroyTexture(texture);
         }
     }

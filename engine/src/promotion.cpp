@@ -1,4 +1,4 @@
-#include "mygame/promotion.h"
+#include "chess/promotion.h"
 #include <cstdlib>
 
 void promotePawn(int board[BOARD_SIZE][BOARD_SIZE], const Move &move)

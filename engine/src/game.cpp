@@ -1,6 +1,6 @@
-#include "mygame/game.h"
-#include "mygame/board_state.h"
-#include "mygame/move.h"
+#include "chess/game.h"
+#include "chess/board_state.h"
+#include "chess/move.h"
 #include <cstdlib>
 
 bool isPlayerPiece(int piece, Turn currentTurn)

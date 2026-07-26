@@ -1,8 +1,8 @@
-#include "mygame/rules.h"
-#include "mygame/check.h"
-#include "mygame/constants.h"
-#include "mygame/game.h"
-#include "mygame/move.h"
+#include "chess/rules.h"
+#include "chess/check.h"
+#include "chess/constants.h"
+#include "chess/game.h"
+#include "chess/move.h"
 #include <cstdlib>
 
 bool isHorizontalOrVertical(const Move &move)

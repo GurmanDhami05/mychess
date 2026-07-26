@@ -8,22 +8,26 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
 add_executable(chess
-    src/main.cpp
-    src/mygame/board.cpp
-    src/mygame/renderer.cpp
-    src/mygame/sdl.cpp
-    src/mygame/textures.cpp
-    src/mygame/input.cpp
-    src/mygame/game.cpp
-    src/mygame/rules.cpp
-    src/mygame/check.cpp
-    src/mygame/board_state.cpp
-    src/mygame/checkmate.cpp
-    src/mygame/promotion.cpp
-    src/mygame/legal_moves.cpp
-)
+    app/main.cpp
 
-target_include_directories(chess PRIVATE include)
+    engine/src/board.cpp
+    engine/src/board_state.cpp
+    engine/src/check.cpp
+    engine/src/checkmate.cpp
+    engine/src/game.cpp
+    engine/src/move_controller.cpp
+    engine/src/legal_moves.cpp
+    engine/src/promotion.cpp
+    engine/src/rules.cpp
+
+    ui/src/renderer.cpp
+    ui/src/sdl.cpp
+    ui/src/textures.cpp
+)
+target_include_directories(chess PRIVATE
+    engine/include
+    ui/include
+)
 
 target_link_libraries(chess
     SDL2::SDL2

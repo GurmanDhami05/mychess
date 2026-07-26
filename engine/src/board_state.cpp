@@ -1,7 +1,7 @@
-#include "mygame/board_state.h"
-#include "mygame/check.h"
-#include "mygame/checkmate.h"
-#include "mygame/constants.h"
+#include "chess/board_state.h"
+#include "chess/check.h"
+#include "chess/checkmate.h"
+#include "chess/constants.h"
 
 void updateBoardState(BoardState &state,
                       int board[BOARD_SIZE][BOARD_SIZE],

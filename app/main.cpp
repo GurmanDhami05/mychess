@@ -1,12 +1,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "mygame/board.h"
-#include "mygame/board_state.h"
-#include "mygame/input.h"
-#include "mygame/renderer.h"
-#include "mygame/sdl.h"
-#include "mygame/textures.h"
+#include "chess/board.h"
+#include "chess/board_state.h"
+#include "chess/move_controller.h"
+#include "renderer.h"
+#include "sdl.h"
+#include "textures.h"
 
 int main()
 {

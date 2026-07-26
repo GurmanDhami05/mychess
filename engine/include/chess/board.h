@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mygame/constants.h"
+#include "chess/constants.h"
 #include <array>
 #include <string>
 

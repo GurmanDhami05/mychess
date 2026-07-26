@@ -1,7 +1,7 @@
-#include "mygame/check.h"
-#include "mygame/game.h"
-#include "mygame/position.h"
-#include "mygame/rules.h"
+#include "chess/check.h"
+#include "chess/game.h"
+#include "chess/position.h"
+#include "chess/rules.h"
 #include <stdlib.h>
 
 Position getKingPosition(const int board[BOARD_SIZE][BOARD_SIZE], Turn kingTurn)

@@ -1,7 +1,7 @@
-#include "mygame/renderer.h"
-#include "mygame/board.h"
-#include "mygame/board_state.h"
-#include "mygame/piece_selected.h"
+#include "renderer.h"
+#include "chess/board.h"
+#include "chess/board_state.h"
+#include "chess/piece_selected.h"
 #include <iostream>
 
 void drawFilledCircle(SDL_Renderer *renderer,
