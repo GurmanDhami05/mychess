@@ -4,6 +4,19 @@
 #include "mygame/piece_selected.h"
 #include <iostream>
 
+void drawFilledCircle(SDL_Renderer *renderer,
+                      int centerX,
+                      int centerY,
+                      int radius)
+{
+    for (int y = -radius; y <= radius; y++)
+    {
+        int dx = (int)std::sqrt(radius * radius - y * y);
+        SDL_RenderDrawLine(
+            renderer, centerX - dx, centerY + y, centerX + dx, centerY + y);
+    }
+}
+
 void render(SDL_Renderer *renderer,
             const Textures &textures,
             const int board[BOARD_SIZE][BOARD_SIZE],
@@ -14,6 +27,7 @@ void render(SDL_Renderer *renderer,
 
     // drawing chess board
     drawBoard(renderer, state);
+    drawLegalMoves(renderer, state, board);
     drawPieces(renderer, textures, board);
 
     static bool printed = false;
@@ -55,7 +69,7 @@ void drawBoard(SDL_Renderer *renderer, const BoardState &state)
             {
                 if (kingInCheck)
                 {
-                    SDL_SetRenderDrawColor(renderer, 170, 82, 82, 255);
+                    SDL_SetRenderDrawColor(renderer, 196, 70, 70, 255);
                 }
                 else if (isSelected)
                 {
@@ -71,7 +85,7 @@ void drawBoard(SDL_Renderer *renderer, const BoardState &state)
 
                 if (kingInCheck)
                 {
-                    SDL_SetRenderDrawColor(renderer, 170, 82, 82, 255);
+                    SDL_SetRenderDrawColor(renderer, 196, 70, 70, 255);
                 }
                 else if (isSelected)
                 {
@@ -122,5 +136,30 @@ void drawPieces(SDL_Renderer *renderer,
 
             SDL_RenderCopy(renderer, pieceTexture, nullptr, &pieceRect);
         }
+    }
+}
+
+void drawLegalMoves(SDL_Renderer *renderer,
+                    const BoardState &state,
+                    const int board[BOARD_SIZE][BOARD_SIZE])
+{
+    SDL_SetRenderDrawBlendMode(renderer,
+                               SDL_BLENDMODE_BLEND); // needed for alpha to work
+
+    for (const Position &pos : state.legalMoves)
+    {
+        if (board[pos.row][pos.col] == EMPTY)
+        {
+            SDL_SetRenderDrawColor(renderer, 90, 160, 90, 140);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(renderer, 220, 60, 60, 140);
+        }
+        int centerX = pos.col * TILE_SIZE + TILE_SIZE / 2;
+        int centerY = pos.row * TILE_SIZE + TILE_SIZE / 2;
+        int radius = TILE_SIZE / 6;
+
+        drawFilledCircle(renderer, centerX, centerY, radius);
     }
 }

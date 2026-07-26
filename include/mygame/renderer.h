@@ -17,3 +17,6 @@ void render(SDL_Renderer *renderer,
             const Textures &textures,
             const int board[BOARD_SIZE][BOARD_SIZE],
             const BoardState &state);
+void drawLegalMoves(SDL_Renderer *renderer,
+                    const BoardState &state,
+                    const int board[BOARD_SIZE][BOARD_SIZE]);

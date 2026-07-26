@@ -2,6 +2,7 @@
 #include "mygame/board_state.h"
 #include "mygame/check.h"
 #include "mygame/game.h"
+#include "mygame/legal_moves.h"
 #include "mygame/promotion.h"
 #include "mygame/rules.h"
 
@@ -87,6 +88,8 @@ bool handleClick(int mouseX,
         updateEnPassantTarget(move, movedPiece, state);
         promotePawn(board, move);
         state.selection.selected = false;
+        state.legalMoves.clear();
+        state.selection.position = { -1, -1 };
         switchTurn(currentTurn);
         return true;
     }
@@ -95,6 +98,8 @@ bool handleClick(int mouseX,
     {
         state.selection.selected = true;
         state.selection.position = clicked;
+
+        state.legalMoves = getLegalMoves(board, clicked, currentTurn, state);
     }
 
     return false;

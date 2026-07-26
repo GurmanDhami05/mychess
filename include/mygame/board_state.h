@@ -4,6 +4,7 @@
 #include "mygame/piece_selected.h"
 #include "mygame/position.h"
 #include "mygame/turn.h"
+#include <vector>
 
 struct KingState
 {
@@ -37,6 +38,8 @@ struct BoardState
     CastlingRights castling;
 
     Position enPassantTarget = { -1, -1 };
+
+    std::vector<Position> legalMoves;
 };
 
 void updateBoardState(BoardState &state,

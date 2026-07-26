@@ -20,6 +20,7 @@ add_executable(chess
     src/mygame/board_state.cpp
     src/mygame/checkmate.cpp
     src/mygame/promotion.cpp
+    src/mygame/legal_moves.cpp
 )
 
 target_include_directories(chess PRIVATE include)
