@@ -62,7 +62,7 @@ The project is split into small modules, including:
 ## Building
 
 ```bash
-git clone https://github.com/<your-username>/Chess.git
+git clone https://github.com/GurmanDhami05/mychess
 cd Chess
 
 cmake -B build
