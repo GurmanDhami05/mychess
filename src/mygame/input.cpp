@@ -2,8 +2,8 @@
 #include "mygame/board_state.h"
 #include "mygame/check.h"
 #include "mygame/game.h"
+#include "mygame/promotion.h"
 #include "mygame/rules.h"
-#include <iostream>
 
 bool handleClick(int mouseX,
                  int mouseY,
@@ -85,6 +85,7 @@ bool handleClick(int mouseX,
 
         updateCastlingRights(move, movedPiece, state);
         updateEnPassantTarget(move, movedPiece, state);
+        promotePawn(board, move);
         state.selection.selected = false;
         switchTurn(currentTurn);
         return true;
