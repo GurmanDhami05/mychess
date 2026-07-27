@@ -1,13 +1,12 @@
 #pragma once
-#include "chess/constants.h"
-#include "chess/game.h"
+#include "chess/board.h"
 #include "chess/position.h"
+#include "chess/turn.h"
 
-Position getKingPosition(const int board[BOARD_SIZE][BOARD_SIZE],
-                         Turn kingTurn);
-bool attacksSquare(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move);
+Position getKingPosition(const Board &board, Turn kingTurn);
+bool attacksSquare(const Board &board, const Move &move);
 
-bool isSquareAttacked(const int board[BOARD_SIZE][BOARD_SIZE],
+bool isSquareAttacked(const Board &board,
                       const Position &square,
                       Turn attackerTurn);
-bool isKingInCheck(const int board[BOARD_SIZE][BOARD_SIZE], Turn kingTurn);
+bool isKingInCheck(const Board &board, Turn kingTurn);

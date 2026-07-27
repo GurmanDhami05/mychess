@@ -1,11 +1,33 @@
 #pragma once
 
 #include "chess/constants.h"
-#include <array>
-#include <string>
+#include "chess/move.h"
 
-extern const std::array<std::string, 13> piecesLUT;
+class Board
+{
+  private:
+    int squares_[BOARD_SIZE][BOARD_SIZE];
+    void initialize();
 
-void initializeBoard(int board[BOARD_SIZE][BOARD_SIZE]);
-void printBoard(const int board[BOARD_SIZE][BOARD_SIZE]);
-int pieceToIndex(int piece);
+  public:
+    Board();
+
+    int pieceAt(const Position &pos) const;
+
+    void setPiece(const Position &pos, int piece);
+
+    bool isEmpty(const Position &pos) const;
+
+    bool isInside(const Position &pos) const;
+
+    void movePiece(const Move &move);
+    void undoMove(const Move &move, int capturedPiece);
+
+    void performCastle(const Move &kingMove);
+    void undoCastle(const Move &kingMove);
+
+    void performEnPassant(const Move &move);
+    void undoEnPassant(const Move &move, int capturedPawnRow);
+
+    void printBoard() const;
+};

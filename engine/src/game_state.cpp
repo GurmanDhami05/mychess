@@ -1,11 +1,8 @@
-#include "chess/board_state.h"
+#include "chess/game_state.h"
 #include "chess/check.h"
 #include "chess/checkmate.h"
-#include "chess/constants.h"
 
-void updateBoardState(BoardState &state,
-                      int board[BOARD_SIZE][BOARD_SIZE],
-                      Turn currentTurn)
+void updateGameState(GameState &state, Board &board, Turn currentTurn)
 {
     state.whiteKing.position = getKingPosition(board, Turn::White);
     state.blackKing.position = getKingPosition(board, Turn::Black);

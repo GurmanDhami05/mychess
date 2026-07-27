@@ -4,13 +4,13 @@
 #include "chess/move.h"
 #include "chess/rules.h"
 
-bool hasLegalMove(int board[BOARD_SIZE][BOARD_SIZE], Turn side)
+bool hasLegalMove(Board &board, Turn side)
 {
     for (int row = 0; row < BOARD_SIZE; ++row)
     {
         for (int col = 0; col < BOARD_SIZE; ++col)
         {
-            int piece = board[row][col];
+            int piece = board.pieceAt({ row, col });
             if (isPlayerPiece(piece, side))
             {
                 for (int toRow = 0; toRow < BOARD_SIZE; ++toRow)
@@ -23,10 +23,10 @@ bool hasLegalMove(int board[BOARD_SIZE][BOARD_SIZE], Turn side)
                             continue;
                         }
 
-                        int capturedPiece = board[move.to.row][move.to.col];
-                        movePiece(board, move);
+                        int capturedPiece = board.pieceAt(move.to);
+                        board.movePiece(move);
                         bool legal = !isKingInCheck(board, side);
-                        undoMove(board, move, capturedPiece);
+                        board.undoMove(move, capturedPiece);
 
                         if (legal)
                         {
@@ -40,12 +40,12 @@ bool hasLegalMove(int board[BOARD_SIZE][BOARD_SIZE], Turn side)
     return false;
 }
 
-bool isCheckmate(int board[BOARD_SIZE][BOARD_SIZE], Turn side)
+bool isCheckmate(Board &board, Turn side)
 {
     return (isKingInCheck(board, side) && !hasLegalMove(board, side));
 }
 
-bool isStalemate(int board[BOARD_SIZE][BOARD_SIZE], Turn side)
+bool isStalemate(Board &board, Turn side)
 {
     return (!isKingInCheck(board, side) && !hasLegalMove(board, side));
 }

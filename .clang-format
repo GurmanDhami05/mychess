@@ -8,3 +8,4 @@ Cpp11BracedListStyle: false
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
+AllowShortFunctionsOnASingleLine: None

@@ -1,6 +1,6 @@
 #include "textures.h"
-#include "chess/board.h"
 
+#include "piece_mapper.h"
 #include <SDL2/SDL_image.h>
 #include <array>
 #include <iostream>

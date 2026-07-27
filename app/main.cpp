@@ -1,20 +1,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "chess/board.h"
-#include "chess/board_state.h"
-#include "chess/move_controller.h"
+#include "chess/chess_engine.h"
 #include "renderer.h"
 #include "sdl.h"
 #include "textures.h"
 
 int main()
 {
-
-    int board[BOARD_SIZE][BOARD_SIZE];
-    initializeBoard(board);
-
-    // printBoard(board);
 
     if (!initializeSDL())
     {
@@ -55,11 +48,8 @@ int main()
         return 1;
     }
 
-    BoardState state{};
+    ChessEngine engine;
 
-    Turn currentTurn = Turn::White;
-
-    updateBoardState(state, board, currentTurn);
     bool isRunning = true;
     SDL_Event event;
 
@@ -79,14 +69,14 @@ int main()
                 int mouseX = event.button.x;
                 int mouseY = event.button.y;
 
-                if (handleClick(mouseX, mouseY, board, currentTurn, state))
+                if (engine.handleClick(mouseX, mouseY))
                 {
-                    updateBoardState(state, board, currentTurn);
+                    engine.update();
                 }
             }
         }
 
-        render(renderer, textures, board, state);
+        render(renderer, textures, engine.board(), engine.state());
     }
 
     destroyTextures(textures);

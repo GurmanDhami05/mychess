@@ -1,25 +1,23 @@
 #include "chess/legal_moves.h"
-#include "chess/board_state.h"
 #include "chess/check.h"
 #include "chess/game.h"
+#include "chess/game_state.h"
 #include "chess/move.h"
 #include "chess/rules.h"
 #include <cstdlib>
 #include <vector>
 
-std::vector<Position> getLegalMoves(int board[BOARD_SIZE][BOARD_SIZE],
-                                    Position from,
-                                    Turn side,
-                                    const BoardState &state)
+std::vector<Position>
+getLegalMoves(Board &board, Position from, Turn side, const GameState &state)
 {
 
-    if (!isPlayerPiece(board[from.row][from.col], side))
+    if (!isPlayerPiece(board.pieceAt(from), side))
     {
         return {};
     }
 
     std::vector<Position> legalMoves;
-    int piece = board[from.row][from.col];
+    int piece = board.pieceAt(from);
     for (int row = 0; row < BOARD_SIZE; ++row)
     {
         for (int col = 0; col < BOARD_SIZE; ++col)
@@ -39,8 +37,9 @@ std::vector<Position> getLegalMoves(int board[BOARD_SIZE][BOARD_SIZE],
                 enPassant = canEnPassant(board, move, state);
             }
 
-            int capturedPiece = enPassant ? board[move.from.row][move.to.col]
-                                          : board[move.to.row][move.to.col];
+            int capturedPiece =
+                enPassant ? board.pieceAt({ move.from.row, move.to.col })
+                          : board.pieceAt(move.to);
 
             if (!isMoveLegal(board, move) && !castling && !enPassant)
             {
@@ -49,30 +48,30 @@ std::vector<Position> getLegalMoves(int board[BOARD_SIZE][BOARD_SIZE],
 
             if (castling)
             {
-                performCastle(board, move);
+                board.performCastle(move);
             }
             else if (enPassant)
             {
-                performEnPassant(board, move);
+                board.performEnPassant(move);
             }
             else
             {
-                movePiece(board, move);
+                board.movePiece(move);
             }
 
             bool legal = !isKingInCheck(board, side);
 
             if (castling)
             {
-                undoCastle(board, move);
+                board.undoCastle(move);
             }
             else if (enPassant)
             {
-                undoEnPassant(board, move, capturedPiece);
+                board.undoEnPassant(move, capturedPiece);
             }
             else
             {
-                undoMove(board, move, capturedPiece);
+                board.undoMove(move, capturedPiece);
             }
 
             if (legal)

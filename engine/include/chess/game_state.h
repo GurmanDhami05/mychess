@@ -1,5 +1,5 @@
 #pragma once
-#include "chess/constants.h"
+#include "chess/board.h"
 #include "chess/piece_selected.h"
 #include "chess/position.h"
 #include "chess/turn.h"
@@ -24,7 +24,7 @@ struct CastlingRights
     bool blackQueensideRookMoved = false;
 };
 
-struct BoardState
+struct GameState
 {
     PieceSelected selection;
 
@@ -41,6 +41,4 @@ struct BoardState
     std::vector<Position> legalMoves;
 };
 
-void updateBoardState(BoardState &state,
-                      int board[BOARD_SIZE][BOARD_SIZE],
-                      Turn currentTurn);
+void updateGameState(GameState &state, Board &board, Turn currentTurn);

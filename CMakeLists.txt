@@ -11,18 +11,20 @@ add_executable(chess
     app/main.cpp
 
     engine/src/board.cpp
-    engine/src/board_state.cpp
+    engine/src/game_state.cpp
     engine/src/check.cpp
     engine/src/checkmate.cpp
     engine/src/game.cpp
-    engine/src/move_controller.cpp
     engine/src/legal_moves.cpp
     engine/src/promotion.cpp
     engine/src/rules.cpp
+    engine/src/chess_engine.cpp
 
     ui/src/renderer.cpp
     ui/src/sdl.cpp
     ui/src/textures.cpp
+    ui/src/piece_mapper.cpp
+
 )
 target_include_directories(chess PRIVATE
     engine/include

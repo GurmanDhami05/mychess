@@ -1,22 +1,21 @@
 #pragma once
 
-#include "chess/board_state.h"
-#include "chess/constants.h"
+#include "chess/game_state.h"
 #include "textures.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-void drawBoard(SDL_Renderer *renderer, const BoardState &state);
+void drawBoard(SDL_Renderer *renderer, const GameState &state);
 
 void drawPieces(SDL_Renderer *renderer,
                 const Textures &textures,
-                const int board[BOARD_SIZE][BOARD_SIZE]);
+                const Board &board);
 
 void render(SDL_Renderer *renderer,
             const Textures &textures,
-            const int board[BOARD_SIZE][BOARD_SIZE],
-            const BoardState &state);
+            const Board &board,
+            const GameState &state);
 void drawLegalMoves(SDL_Renderer *renderer,
-                    const BoardState &state,
-                    const int board[BOARD_SIZE][BOARD_SIZE]);
+                    const GameState &state,
+                    const Board &board);

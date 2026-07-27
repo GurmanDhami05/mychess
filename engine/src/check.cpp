@@ -4,14 +4,14 @@
 #include "chess/rules.h"
 #include <stdlib.h>
 
-Position getKingPosition(const int board[BOARD_SIZE][BOARD_SIZE], Turn kingTurn)
+Position getKingPosition(const Board &board, Turn kingTurn)
 {
     int kingPiece = (kingTurn == Turn::White) ? 6 : -6;
     for (int row = 0; row < BOARD_SIZE; ++row)
     {
         for (int col = 0; col < BOARD_SIZE; ++col)
         {
-            if (board[row][col] == kingPiece)
+            if (board.pieceAt({ row, col }) == kingPiece)
             {
                 return { row, col };
             }
@@ -20,10 +20,10 @@ Position getKingPosition(const int board[BOARD_SIZE][BOARD_SIZE], Turn kingTurn)
     return { -1, -1 }; // Return an invalid position if the king is not found
 }
 
-bool isPawnAttack(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isPawnAttack(const Board &board, const Move &move)
 {
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     int direction = (fromPiece > 0) ? -1 : 1;
 
@@ -37,10 +37,10 @@ bool isPawnAttack(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     return false;
 }
 
-bool attacksSquare(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool attacksSquare(const Board &board, const Move &move)
 {
 
-    int piece = board[move.from.row][move.from.col];
+    int piece = board.pieceAt(move.from);
     switch (abs(piece))
     {
     case 1:
@@ -61,7 +61,7 @@ bool attacksSquare(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     }
 }
 
-bool isSquareAttacked(const int board[BOARD_SIZE][BOARD_SIZE],
+bool isSquareAttacked(const Board &board,
                       const Position &square,
                       Turn attackerTurn)
 {
@@ -69,7 +69,7 @@ bool isSquareAttacked(const int board[BOARD_SIZE][BOARD_SIZE],
     {
         for (int col = 0; col < BOARD_SIZE; ++col)
         {
-            int piece = board[row][col];
+            int piece = board.pieceAt({ row, col });
             if (piece != EMPTY && isPlayerPiece(piece, attackerTurn))
             {
                 Move move{ { row, col }, square };
@@ -83,7 +83,7 @@ bool isSquareAttacked(const int board[BOARD_SIZE][BOARD_SIZE],
     return false;
 }
 
-bool isKingInCheck(const int board[BOARD_SIZE][BOARD_SIZE], Turn kingTurn)
+bool isKingInCheck(const Board &board, Turn kingTurn)
 {
     Position kingPos = getKingPosition(board, kingTurn);
     if (kingPos.row == -1 || kingPos.col == -1)

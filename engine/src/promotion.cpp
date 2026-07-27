@@ -1,9 +1,10 @@
 #include "chess/promotion.h"
+#include "chess/board.h"
 #include <cstdlib>
 
-void promotePawn(int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+void promotePawn(Board &board, const Move &move)
 {
-    int piece = board[move.to.row][move.to.col];
+    int piece = board.pieceAt(move.from);
 
     if (abs(piece) != 1)
     {
@@ -14,6 +15,7 @@ void promotePawn(int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
 
     if (move.to.row == promotionRow)
     {
-        board[move.to.row][move.to.col] = (piece > 0) ? 5 : -5;
+        int promotedPiece = (piece > 0) ? 5 : -5;
+        board.setPiece(move.to, promotedPiece);
     }
 }

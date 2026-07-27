@@ -1,5 +1,5 @@
 #include "chess/game.h"
-#include "chess/board_state.h"
+#include "chess/game_state.h"
 #include "chess/move.h"
 #include <cstdlib>
 
@@ -33,21 +33,7 @@ void switchTurn(Turn &currentTurn)
     }
 }
 
-void movePiece(int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
-{
-    board[move.to.row][move.to.col] = board[move.from.row][move.from.col];
-    board[move.from.row][move.from.col] = EMPTY;
-}
-
-void undoMove(int board[BOARD_SIZE][BOARD_SIZE],
-              const Move &move,
-              int capturedPiece)
-{
-    board[move.from.row][move.from.col] = board[move.to.row][move.to.col];
-    board[move.to.row][move.to.col] = capturedPiece;
-}
-
-void updateCastlingRights(const Move &move, int movedPiece, BoardState &state)
+void updateCastlingRights(const Move &move, int movedPiece, GameState &state)
 {
     if (movedPiece == 2 && move.from.row == 7 &&
         move.from.col == 0) // White queen-side rook
@@ -80,41 +66,7 @@ void updateCastlingRights(const Move &move, int movedPiece, BoardState &state)
     }
 }
 
-void performCastle(int board[BOARD_SIZE][BOARD_SIZE], const Move &kingMove)
-{
-    int row = kingMove.from.row;
-    movePiece(board, kingMove); // Move the king first
-
-    if (kingMove.to.col == 6) // King-side castle
-    {
-        Move rookMove{ { row, 7 }, { row, 5 } };
-        movePiece(board, rookMove);
-    }
-    else if (kingMove.to.col == 2) // Queen-side castle
-    {
-        Move rookMove{ { row, 0 }, { row, 3 } };
-        movePiece(board, rookMove);
-    }
-}
-
-void undoCastle(int board[BOARD_SIZE][BOARD_SIZE], const Move &kingMove)
-{
-    int row = kingMove.from.row;
-    undoMove(board, kingMove, EMPTY); // Undo the king's move
-
-    if (kingMove.to.col == 6) // King-side castle
-    {
-        Move rookMove{ { row, 5 }, { row, 7 } };
-        undoMove(board, rookMove, EMPTY);
-    }
-    else if (kingMove.to.col == 2) // Queen-side castle
-    {
-        Move rookMove{ { row, 3 }, { row, 0 } };
-        undoMove(board, rookMove, EMPTY);
-    }
-}
-
-void updateEnPassantTarget(const Move &move, int movedPiece, BoardState &state)
+void updateEnPassantTarget(const Move &move, int movedPiece, GameState &state)
 {
     if (abs(movedPiece) == 1 && abs(move.to.row - move.from.row) == 2)
     {
@@ -125,30 +77,4 @@ void updateEnPassantTarget(const Move &move, int movedPiece, BoardState &state)
     {
         state.enPassantTarget = { -1, -1 };
     }
-}
-
-void performEnPassant(int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
-{
-    int capturedPawnRow = move.from.row;
-    int capturedPawnCol = move.to.col;
-
-    // Move the pawn
-    movePiece(board, move);
-
-    // Remove the captured pawn
-    board[capturedPawnRow][capturedPawnCol] = EMPTY;
-}
-
-void undoEnPassant(int board[BOARD_SIZE][BOARD_SIZE],
-                   const Move &move,
-                   int capturedPawn)
-{
-    int capturedPawnRow = move.from.row;
-    int capturedPawnCol = move.to.col;
-
-    // Undo the pawn's move
-    undoMove(board, move, EMPTY);
-
-    // Restore the captured pawn
-    board[capturedPawnRow][capturedPawnCol] = capturedPawn;
 }

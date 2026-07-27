@@ -1,7 +1,7 @@
 #include "renderer.h"
-#include "chess/board.h"
-#include "chess/board_state.h"
+#include "chess/game_state.h"
 #include "chess/piece_selected.h"
+#include "piece_mapper.h"
 #include <iostream>
 
 void drawFilledCircle(SDL_Renderer *renderer,
@@ -17,10 +17,50 @@ void drawFilledCircle(SDL_Renderer *renderer,
     }
 }
 
+void drawHollowCircle(SDL_Renderer *renderer,
+                      int centerX,
+                      int centerY,
+                      int radius)
+{
+    int x = radius;
+    int y = 0;
+    int err = 0;
+
+    while (x >= y)
+    {
+        // 8-way symmetry: plot all octants at once
+        SDL_RenderDrawPoint(renderer, centerX + x, centerY + y);
+        SDL_RenderDrawPoint(renderer, centerX + y, centerY + x);
+        SDL_RenderDrawPoint(renderer, centerX - y, centerY + x);
+        SDL_RenderDrawPoint(renderer, centerX - x, centerY + y);
+        SDL_RenderDrawPoint(renderer, centerX - x, centerY - y);
+        SDL_RenderDrawPoint(renderer, centerX - y, centerY - x);
+        SDL_RenderDrawPoint(renderer, centerX + y, centerY - x);
+        SDL_RenderDrawPoint(renderer, centerX + x, centerY - y);
+
+        y += 1;
+        err += 1 + 2 * y;
+        if (2 * (err - x) + 1 > 0)
+        {
+            x -= 1;
+            err += 1 - 2 * x;
+        }
+    }
+}
+
+void drawThickHollowCircle(
+    SDL_Renderer *renderer, int centerX, int centerY, int radius, int thickness)
+{
+    for (int r = radius; r < radius + thickness; r++)
+    {
+        drawHollowCircle(renderer, centerX, centerY, r);
+    }
+}
+
 void render(SDL_Renderer *renderer,
             const Textures &textures,
-            const int board[BOARD_SIZE][BOARD_SIZE],
-            const BoardState &state)
+            const Board &board,
+            const GameState &state)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -49,7 +89,7 @@ void render(SDL_Renderer *renderer,
     SDL_RenderPresent(renderer);
 }
 
-void drawBoard(SDL_Renderer *renderer, const BoardState &state)
+void drawBoard(SDL_Renderer *renderer, const GameState &state)
 {
     for (int row = 0; row < BOARD_SIZE; row++)
     {
@@ -108,14 +148,14 @@ void drawBoard(SDL_Renderer *renderer, const BoardState &state)
 
 void drawPieces(SDL_Renderer *renderer,
                 const Textures &textures,
-                const int board[BOARD_SIZE][BOARD_SIZE])
+                const Board &board)
 {
     for (int row = 0; row < BOARD_SIZE; row++)
     {
         for (int col = 0; col < BOARD_SIZE; col++)
         {
 
-            int piece = board[row][col];
+            int piece = board.pieceAt({ row, col });
 
             if (piece == EMPTY)
             {
@@ -140,26 +180,28 @@ void drawPieces(SDL_Renderer *renderer,
 }
 
 void drawLegalMoves(SDL_Renderer *renderer,
-                    const BoardState &state,
-                    const int board[BOARD_SIZE][BOARD_SIZE])
+                    const GameState &state,
+                    const Board &board)
 {
     SDL_SetRenderDrawBlendMode(renderer,
                                SDL_BLENDMODE_BLEND); // needed for alpha to work
 
     for (const Position &pos : state.legalMoves)
     {
-        if (board[pos.row][pos.col] == EMPTY)
+        int centerX = pos.col * TILE_SIZE + TILE_SIZE / 2;
+        int centerY = pos.row * TILE_SIZE + TILE_SIZE / 2;
+        int radius;
+        if (board.pieceAt({ pos.row, pos.col }) == EMPTY)
         {
             SDL_SetRenderDrawColor(renderer, 90, 160, 90, 140);
+            radius = TILE_SIZE / 6;
+            drawFilledCircle(renderer, centerX, centerY, radius);
         }
         else
         {
             SDL_SetRenderDrawColor(renderer, 220, 60, 60, 140);
+            radius = TILE_SIZE / 3;
+            drawThickHollowCircle(renderer, centerX, centerY, radius, 6);
         }
-        int centerX = pos.col * TILE_SIZE + TILE_SIZE / 2;
-        int centerY = pos.row * TILE_SIZE + TILE_SIZE / 2;
-        int radius = TILE_SIZE / 6;
-
-        drawFilledCircle(renderer, centerX, centerY, radius);
     }
 }

@@ -1,4 +1,5 @@
 #include "chess/rules.h"
+#include "chess/board.h"
 #include "chess/check.h"
 #include "chess/constants.h"
 #include "chess/game.h"
@@ -10,7 +11,7 @@ bool isHorizontalOrVertical(const Move &move)
     return (move.from.col == move.to.col || move.from.row == move.to.row);
 }
 
-bool isPathClear(const int board[BOARD_SIZE][BOARD_SIZE],
+bool isPathClear(const Board &board,
                  const Move &move,
                  const int rowStep,
                  const int colStep)
@@ -19,7 +20,7 @@ bool isPathClear(const int board[BOARD_SIZE][BOARD_SIZE],
 
     while (!(current.col == move.to.col && current.row == move.to.row))
     {
-        if (board[current.row][current.col] != EMPTY)
+        if (board.pieceAt(current) != EMPTY)
         {
             return false;
         }
@@ -36,11 +37,9 @@ bool isDiagonal(const Move &move)
     return (abs(rowDiff) == abs(colDiff));
 }
 
-bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
-               const Move &move,
-               const BoardState &state)
+bool canCastle(const Board &board, const Move &move, const GameState &state)
 {
-    int piece = board[move.from.row][move.from.col];
+    int piece = board.pieceAt(move.from);
     int homerow = (piece > 0) ? 7 : 0;
     Turn attacker = (piece > 0) ? Turn::Black : Turn::White;
 
@@ -61,11 +60,12 @@ bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
         }
         if (move.to.col == 6 && !state.castling.whiteKingsideRookMoved)
         {
-            if (board[homerow][7] != 2)
+            if (board.pieceAt({ homerow, 7 }) != 2)
             {
                 return false;
             }
-            else if (board[homerow][5] != EMPTY || board[homerow][6] != EMPTY)
+            else if (board.pieceAt({ homerow, 5 }) != EMPTY ||
+                     board.pieceAt({ homerow, 6 }) != EMPTY)
             {
                 return false;
             }
@@ -79,12 +79,13 @@ bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
         }
         else if (move.to.col == 2 && !state.castling.whiteQueensideRookMoved)
         {
-            if (board[homerow][0] != 2)
+            if (board.pieceAt({ homerow, 0 }) != 2)
             {
                 return false;
             }
-            else if (board[homerow][3] != EMPTY || board[homerow][2] != EMPTY ||
-                     board[homerow][1] != EMPTY)
+            else if (board.pieceAt({ homerow, 3 }) != EMPTY ||
+                     board.pieceAt({ homerow, 2 }) != EMPTY ||
+                     board.pieceAt({ homerow, 1 }) != EMPTY)
             {
                 return false;
             }
@@ -105,11 +106,12 @@ bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
         }
         if (move.to.col == 6 && !state.castling.blackKingsideRookMoved)
         {
-            if (board[homerow][7] != -2)
+            if (board.pieceAt({ homerow, 7 }) != -2)
             {
                 return false;
             }
-            else if (board[homerow][5] != EMPTY || board[homerow][6] != EMPTY)
+            else if (board.pieceAt({ homerow, 5 }) != EMPTY ||
+                     board.pieceAt({ homerow, 6 }) != EMPTY)
             {
                 return false;
             }
@@ -123,12 +125,13 @@ bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
         }
         else if (move.to.col == 2 && !state.castling.blackQueensideRookMoved)
         {
-            if (board[homerow][0] != -2)
+            if (board.pieceAt({ homerow, 0 }) != -2)
             {
                 return false;
             }
-            else if (board[homerow][3] != EMPTY || board[homerow][2] != EMPTY ||
-                     board[homerow][1] != EMPTY)
+            else if (board.pieceAt({ homerow, 3 }) != EMPTY ||
+                     board.pieceAt({ homerow, 2 }) != EMPTY ||
+                     board.pieceAt({ homerow, 1 }) != EMPTY)
             {
                 return false;
             }
@@ -144,12 +147,10 @@ bool canCastle(const int board[BOARD_SIZE][BOARD_SIZE],
     return false;
 }
 
-bool canEnPassant(const int board[BOARD_SIZE][BOARD_SIZE],
-                  const Move &move,
-                  const BoardState &state)
+bool canEnPassant(const Board &board, const Move &move, const GameState &state)
 {
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     if (abs(fromPiece) != 1)
     {
@@ -178,9 +179,8 @@ bool canEnPassant(const int board[BOARD_SIZE][BOARD_SIZE],
         return false;
     }
 
-    int capturedPawnRow = move.from.row;
-    int capturedPawnCol = move.to.col;
-    int capturedPawn = board[capturedPawnRow][capturedPawnCol];
+    Position capturedPawnPos{ move.from.row, move.to.col };
+    int capturedPawn = board.pieceAt(capturedPawnPos);
 
     if (!isEnemyPiece(fromPiece, capturedPawn) || abs(capturedPawn) != 1)
     {
@@ -190,10 +190,10 @@ bool canEnPassant(const int board[BOARD_SIZE][BOARD_SIZE],
     return true;
 }
 
-bool isPawnMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isPawnMove(const Board &board, const Move &move)
 {
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     int direction = (fromPiece > 0) ? -1 : 1;
     int startRow = (fromPiece > 0) ? 6 : 1;
@@ -202,14 +202,15 @@ bool isPawnMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     if (move.to.row == move.from.row + direction &&
         move.to.col == move.from.col)
     {
-        return (board[move.to.row][move.to.col] == EMPTY);
+        return (board.pieceAt(move.to) == EMPTY);
     }
     // initial two-square forward
     if (move.to.row == move.from.row + 2 * direction &&
         move.to.col == move.from.col)
     {
-        return (board[move.to.row][move.to.col] == EMPTY &&
-                board[move.from.row + direction][move.to.col] == EMPTY &&
+        return (board.pieceAt(move.to) == EMPTY &&
+                board.pieceAt({ move.from.row + direction, move.to.col }) ==
+                    EMPTY &&
                 move.from.row == startRow);
     }
     // diagonal capture
@@ -222,10 +223,10 @@ bool isPawnMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     return false;
 }
 
-bool isRookMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isRookMove(const Board &board, const Move &move)
 {
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     int rowDiff = move.to.row - move.from.row;
     int colDiff = move.to.col - move.from.col;
@@ -241,15 +242,15 @@ bool isRookMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     {
         return false;
     }
-    return (board[move.to.row][move.to.col] == EMPTY ||
+    return (board.pieceAt(move.to) == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
-bool isBishopMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isBishopMove(const Board &board, const Move &move)
 {
 
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     int rowDiff = move.to.row - move.from.row;
     int colDiff = move.to.col - move.from.col;
@@ -265,19 +266,19 @@ bool isBishopMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     {
         return false;
     }
-    return (board[move.to.row][move.to.col] == EMPTY ||
+    return (board.pieceAt(move.to) == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
-bool isQueenMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isQueenMove(const Board &board, const Move &move)
 {
     return (isRookMove(board, move) || isBishopMove(board, move));
 }
 
-bool isKnightMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isKnightMove(const Board &board, const Move &move)
 {
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     int rowDiff = abs(move.to.row - move.from.row);
     int colDiff = abs(move.to.col - move.from.col);
@@ -286,14 +287,14 @@ bool isKnightMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
     {
         return false;
     }
-    return (board[move.to.row][move.to.col] == EMPTY ||
+    return (board.pieceAt(move.to) == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
-bool isKingMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isKingMove(const Board &board, const Move &move)
 {
-    int fromPiece = board[move.from.row][move.from.col];
-    int toPiece = board[move.to.row][move.to.col];
+    int fromPiece = board.pieceAt(move.from);
+    int toPiece = board.pieceAt(move.to);
 
     int rowDiff = abs(move.to.row - move.from.row);
     int colDiff = abs(move.to.col - move.from.col);
@@ -303,13 +304,13 @@ bool isKingMove(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
         return false;
     }
 
-    return (board[move.to.row][move.to.col] == EMPTY ||
+    return (board.pieceAt(move.to) == EMPTY ||
             isEnemyPiece(fromPiece, toPiece));
 }
 
-bool isMoveLegal(const int board[BOARD_SIZE][BOARD_SIZE], const Move &move)
+bool isMoveLegal(const Board &board, const Move &move)
 {
-    int piece = board[move.from.row][move.from.col];
+    int piece = board.pieceAt(move.from);
     switch (abs(piece))
     {
     case 1:
