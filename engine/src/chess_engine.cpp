@@ -3,6 +3,7 @@
 #include "chess/check.h"
 #include "chess/game_state.h"
 #include "chess/legal_moves.h"
+#include "chess/move_info.h"
 #include "chess/piece.h"
 #include "chess/promotion.h"
 #include "chess/rules.h"
@@ -56,12 +57,11 @@ bool ChessEngine::handleClick(Position clicked)
 
     if (!Piece::isPlayerPiece(piece, turn_) && state_.selection.selected)
     {
-        Move move{ state_.selection.position, clicked };
-        int movedPiece = board_.pieceAt(move.from);
+        MoveInfo info{ Move{ state_.selection.position, clicked } };
 
-        if (tryMove(move))
+        if (tryMove(info))
         {
-            finishMove(move, movedPiece);
+            finishMove(info);
             return true;
         }
         return false;
@@ -126,63 +126,62 @@ void ChessEngine::switchTurn()
     turn_ = (turn_ == Turn::White) ? Turn::Black : Turn::White;
 }
 
-bool ChessEngine::tryMove(const Move &move)
+bool ChessEngine::tryMove(MoveInfo &info)
 {
 
-    int movedPiece = board_.pieceAt(move.from);
-    bool castling = false;
-    bool enPassant = false;
-    int capturedPiece;
+    info.movedPiece = board_.pieceAt(info.move.from);
+    ;
 
-    if (abs(movedPiece) == 6)
+    if (abs(info.movedPiece) == 6)
     {
-        castling = canCastle(board_, move, state_);
+        info.castling = canCastle(board_, info.move, state_);
     }
-    if (abs(movedPiece) == 1)
+    if (abs(info.movedPiece) == 1)
     {
-        enPassant = canEnPassant(board_, move, state_);
+        info.enPassant = canEnPassant(board_, info.move, state_);
     }
 
-    if (enPassant)
+    if (info.enPassant)
     {
-        capturedPiece = board_.pieceAt({ move.from.row, move.to.col });
+        info.capturedPiece =
+            board_.pieceAt({ info.move.from.row, info.move.to.col });
     }
     else
     {
-        capturedPiece = board_.pieceAt(move.to);
+        info.capturedPiece = board_.pieceAt(info.move.to);
     }
 
-    if (!castling && !isMoveLegal(board_, move) && !enPassant)
+    if (!info.castling && !isMoveLegal(board_, info.move) && !info.enPassant)
     {
         return false;
     }
 
-    if (castling)
+    if (info.castling)
     {
-        board_.performCastle(move);
+        board_.performCastle(info.move);
     }
-    else if (enPassant)
+    else if (info.enPassant)
     {
-        board_.performEnPassant(move);
+        board_.performEnPassant(info.move);
     }
     else
     {
-        board_.movePiece(move);
+        board_.movePiece(info.move);
     }
 
     if (isKingInCheck(board_, turn_))
     {
-        if (castling)
+        if (info.castling)
         {
-            board_.undoCastle(move);
+            board_.undoCastle(info.move);
         }
-        else if (enPassant)
+        else if (info.enPassant)
         {
-            board_.undoEnPassant(move, capturedPiece);
+            board_.undoEnPassant(info.move, info.capturedPiece);
         }
         else
         {
-            board_.undoMove(move, capturedPiece);
+            board_.undoMove(info.move, info.capturedPiece);
         }
         return false;
     }
@@ -197,11 +196,11 @@ void ChessEngine::selectPiece(const Position pos)
     state_.legalMoves = getLegalMoves(board_, pos, turn_, state_);
 }
 
-void ChessEngine::finishMove(const Move &move, const int movedPiece)
+void ChessEngine::finishMove(const MoveInfo &info)
 {
-    updateCastlingRights(move, movedPiece);
-    updateEnPassantTarget(move, movedPiece);
-    promotePawn(board_, move);
+    updateCastlingRights(info.move, info.movedPiece);
+    updateEnPassantTarget(info.move, info.movedPiece);
+    promotePawn(board_, info.move);
     state_.selection.selected = false;
     state_.legalMoves.clear();
     state_.selection.position = { -1, -1 };

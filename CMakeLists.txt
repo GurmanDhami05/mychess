@@ -24,6 +24,7 @@ add_executable(chess
     ui/src/sdl.cpp
     ui/src/textures.cpp
     ui/src/piece_mapper.cpp
+    ui/src/game.cpp
 
 )
 target_include_directories(chess PRIVATE

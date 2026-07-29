@@ -2,6 +2,7 @@
 
 #include "chess/board.h"
 #include "chess/game_state.h"
+#include "chess/move_info.h"
 #include "chess/turn.h"
 
 class ChessEngine
@@ -32,7 +33,7 @@ class ChessEngine
 
     void switchTurn();
 
-    bool tryMove(const Move &move);
+    bool tryMove(MoveInfo &info);
     void selectPiece(const Position pos);
-    void finishMove(const Move &move, const int movedPiece);
+    void finishMove(const MoveInfo &info);
 };
