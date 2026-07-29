@@ -39,25 +39,18 @@ Turn ChessEngine::turn() const
     return turn_;
 }
 
-Turn &ChessEngine::turn()
-{
-    return turn_;
-}
-
 void ChessEngine::update()
 {
     updateGameState(state_, board_, turn_);
 }
 
-bool ChessEngine::handleClick(int mouseX, int mouseY)
+bool ChessEngine::handleClick(Position clicked)
 {
 
     if (state_.checkmate || state_.stalemate)
     {
         return false;
     }
-
-    Position clicked{ mouseY / TILE_SIZE, mouseX / TILE_SIZE };
 
     int piece = board_.pieceAt(clicked);
 
@@ -66,79 +59,17 @@ bool ChessEngine::handleClick(int mouseX, int mouseY)
         Move move{ state_.selection.position, clicked };
         int movedPiece = board_.pieceAt(move.from);
 
-        bool castling = false;
-        bool enPassant = false;
-        int capturedPiece;
-
-        if (abs(movedPiece) == 6)
+        if (tryMove(move))
         {
-            castling = canCastle(board_, move, state_);
+            finishMove(move, movedPiece);
+            return true;
         }
-        if (abs(movedPiece) == 1)
-        {
-            enPassant = canEnPassant(board_, move, state_);
-        }
-
-        if (enPassant)
-        {
-            capturedPiece = board_.pieceAt({ move.from.row, move.to.col });
-        }
-        else
-        {
-            capturedPiece = board_.pieceAt(move.to);
-        }
-
-        if (!castling && !isMoveLegal(board_, move) && !enPassant)
-        {
-            return false;
-        }
-
-        if (castling)
-        {
-            board_.performCastle(move);
-        }
-        else if (enPassant)
-        {
-            board_.performEnPassant(move);
-        }
-        else
-        {
-            board_.movePiece(move);
-        }
-
-        if (isKingInCheck(board_, turn_))
-        {
-            if (castling)
-            {
-                board_.undoCastle(move);
-            }
-            else if (enPassant)
-            {
-                board_.undoEnPassant(move, capturedPiece);
-            }
-            else
-            {
-                board_.undoMove(move, capturedPiece);
-            }
-            return false;
-        }
-
-        updateCastlingRights(move, movedPiece);
-        updateEnPassantTarget(move, movedPiece);
-        promotePawn(board_, move);
-        state_.selection.selected = false;
-        state_.legalMoves.clear();
-        state_.selection.position = { -1, -1 };
-        switchTurn();
-        return true;
+        return false;
     }
     // if no piece is selected then first click
     else if (Piece::isPlayerPiece(piece, turn_))
     {
-        state_.selection.selected = true;
-        state_.selection.position = clicked;
-
-        state_.legalMoves = getLegalMoves(board_, clicked, turn_, state_);
+        selectPiece(clicked);
     }
 
     return false;
@@ -192,12 +123,87 @@ void ChessEngine::updateEnPassantTarget(const Move &move, int movedPiece)
 
 void ChessEngine::switchTurn()
 {
-    if (turn_ == Turn::White)
+    turn_ = (turn_ == Turn::White) ? Turn::Black : Turn::White;
+}
+
+bool ChessEngine::tryMove(const Move &move)
+{
+
+    int movedPiece = board_.pieceAt(move.from);
+    bool castling = false;
+    bool enPassant = false;
+    int capturedPiece;
+
+    if (abs(movedPiece) == 6)
     {
-        turn_ = Turn::Black;
+        castling = canCastle(board_, move, state_);
+    }
+    if (abs(movedPiece) == 1)
+    {
+        enPassant = canEnPassant(board_, move, state_);
+    }
+
+    if (enPassant)
+    {
+        capturedPiece = board_.pieceAt({ move.from.row, move.to.col });
     }
     else
     {
-        turn_ = Turn::White;
+        capturedPiece = board_.pieceAt(move.to);
     }
+
+    if (!castling && !isMoveLegal(board_, move) && !enPassant)
+    {
+        return false;
+    }
+
+    if (castling)
+    {
+        board_.performCastle(move);
+    }
+    else if (enPassant)
+    {
+        board_.performEnPassant(move);
+    }
+    else
+    {
+        board_.movePiece(move);
+    }
+
+    if (isKingInCheck(board_, turn_))
+    {
+        if (castling)
+        {
+            board_.undoCastle(move);
+        }
+        else if (enPassant)
+        {
+            board_.undoEnPassant(move, capturedPiece);
+        }
+        else
+        {
+            board_.undoMove(move, capturedPiece);
+        }
+        return false;
+    }
+    return true;
+}
+
+void ChessEngine::selectPiece(const Position pos)
+{
+    state_.selection.selected = true;
+    state_.selection.position = pos;
+
+    state_.legalMoves = getLegalMoves(board_, pos, turn_, state_);
+}
+
+void ChessEngine::finishMove(const Move &move, const int movedPiece)
+{
+    updateCastlingRights(move, movedPiece);
+    updateEnPassantTarget(move, movedPiece);
+    promotePawn(board_, move);
+    state_.selection.selected = false;
+    state_.legalMoves.clear();
+    state_.selection.position = { -1, -1 };
+    switchTurn();
 }

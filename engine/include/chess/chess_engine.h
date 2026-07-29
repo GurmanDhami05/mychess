@@ -13,17 +13,16 @@ class ChessEngine
 
   public:
     ChessEngine();
+
     const Board &board() const;
     Board &board();
 
     const GameState &state() const;
+    GameState &state();
 
     Turn turn() const;
 
-    GameState &state();
-    Turn &turn();
-
-    bool handleClick(int mouseX, int mouseY);
+    bool handleClick(Position clicked);
 
     void update();
 
@@ -32,4 +31,8 @@ class ChessEngine
     void updateEnPassantTarget(const Move &move, int movedPiece);
 
     void switchTurn();
+
+    bool tryMove(const Move &move);
+    void selectPiece(const Position pos);
+    void finishMove(const Move &move, const int movedPiece);
 };

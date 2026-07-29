@@ -66,10 +66,10 @@ int main()
                 event.button.button == SDL_BUTTON_LEFT)
             {
 
-                int mouseX = event.button.x;
-                int mouseY = event.button.y;
+                Position clicked{ event.button.y / TILE_SIZE,
+                                  event.button.x / TILE_SIZE };
 
-                if (engine.handleClick(mouseX, mouseY))
+                if (engine.handleClick(clicked))
                 {
                     engine.update();
                 }
