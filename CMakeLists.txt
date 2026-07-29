@@ -19,6 +19,7 @@ add_executable(chess
     engine/src/rules.cpp
     engine/src/chess_engine.cpp
     engine/src/piece.cpp
+    engine/src/perft.cpp
 
     ui/src/renderer.cpp
     ui/src/sdl.cpp

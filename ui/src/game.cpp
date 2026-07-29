@@ -7,6 +7,11 @@ Game::~Game()
     cleanup();
 }
 
+ChessEngine &Game::engine()
+{
+    return engine_;
+}
+
 bool Game::initialize()
 {
     if (!initializeSDL())

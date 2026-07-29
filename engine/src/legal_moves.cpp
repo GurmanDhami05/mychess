@@ -82,3 +82,26 @@ getLegalMoves(Board &board, Position from, Turn side, const GameState &state)
     }
     return legalMoves;
 }
+
+std::vector<Move>
+getAllLegalMoves(Board &board, Turn side, const GameState &state)
+{
+    std::vector<Move> allLegalMoves;
+    for (int row = 0; row < BOARD_SIZE; ++row)
+    {
+        for (int col = 0; col < BOARD_SIZE; ++col)
+        {
+            Position from{ row, col };
+            if (Piece::isPlayerPiece(board.pieceAt(from), side))
+            {
+                std::vector<Position> destinations =
+                    getLegalMoves(board, from, side, state);
+                for (const Position &to : destinations)
+                {
+                    allLegalMoves.push_back({ from, to });
+                }
+            }
+        }
+    }
+    return allLegalMoves;
+}

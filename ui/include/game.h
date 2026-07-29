@@ -25,5 +25,7 @@ class Game
     bool initialize();
     void run();
 
+    ChessEngine &engine();
+
     ~Game();
 };

@@ -5,3 +5,6 @@
 
 std::vector<Position>
 getLegalMoves(Board &board, Position from, Turn side, const GameState &state);
+
+std::vector<Move>
+getAllLegalMoves(Board &board, Turn side, const GameState &state);

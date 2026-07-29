@@ -7,7 +7,6 @@
 #include "chess/piece.h"
 #include "chess/promotion.h"
 #include "chess/rules.h"
-#include <iostream>
 #include <stdlib.h>
 
 ChessEngine::ChessEngine()
@@ -60,10 +59,8 @@ bool ChessEngine::handleClick(Position clicked)
     {
         MoveInfo info{ Move{ state_.selection.position, clicked } };
 
-        if (tryMove(info))
+        if (makeMove(info.move))
         {
-            finishMove(info);
-            moveHistory_.push_back(info);
             return true;
         }
         return false;
@@ -248,4 +245,16 @@ void ChessEngine::undoLastMove()
     state_.legalMoves.clear();
 
     update();
+}
+
+bool ChessEngine::makeMove(const Move &move)
+{
+    MoveInfo info{ move };
+    if (tryMove(info))
+    {
+        finishMove(info);
+        moveHistory_.push_back(info);
+        return true;
+    }
+    return false;
 }

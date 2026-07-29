@@ -41,4 +41,6 @@ class ChessEngine
     void finishMove(MoveInfo &info);
 
     void undoLastMove();
+
+    bool makeMove(const Move &move);
 };
