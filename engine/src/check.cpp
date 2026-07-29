@@ -1,5 +1,5 @@
 #include "chess/check.h"
-#include "chess/game.h"
+#include "chess/piece.h"
 #include "chess/position.h"
 #include "chess/rules.h"
 #include <stdlib.h>
@@ -31,7 +31,7 @@ bool isPawnAttack(const Board &board, const Move &move)
     if (move.to.row == move.from.row + direction &&
         (move.to.col == move.from.col - 1 || move.to.col == move.from.col + 1))
     {
-        return isEnemyPiece(fromPiece, toPiece);
+        return Piece::isEnemyPiece(fromPiece, toPiece);
     }
 
     return false;
@@ -70,7 +70,7 @@ bool isSquareAttacked(const Board &board,
         for (int col = 0; col < BOARD_SIZE; ++col)
         {
             int piece = board.pieceAt({ row, col });
-            if (piece != EMPTY && isPlayerPiece(piece, attackerTurn))
+            if (piece != EMPTY && Piece::isPlayerPiece(piece, attackerTurn))
             {
                 Move move{ { row, col }, square };
                 if (attacksSquare(board, move))

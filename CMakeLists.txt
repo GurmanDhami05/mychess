@@ -14,11 +14,11 @@ add_executable(chess
     engine/src/game_state.cpp
     engine/src/check.cpp
     engine/src/checkmate.cpp
-    engine/src/game.cpp
     engine/src/legal_moves.cpp
     engine/src/promotion.cpp
     engine/src/rules.cpp
     engine/src/chess_engine.cpp
+    engine/src/piece.cpp
 
     ui/src/renderer.cpp
     ui/src/sdl.cpp

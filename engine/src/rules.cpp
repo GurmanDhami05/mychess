@@ -2,8 +2,8 @@
 #include "chess/board.h"
 #include "chess/check.h"
 #include "chess/constants.h"
-#include "chess/game.h"
 #include "chess/move.h"
+#include "chess/piece.h"
 #include <cstdlib>
 
 bool isHorizontalOrVertical(const Move &move)
@@ -182,7 +182,7 @@ bool canEnPassant(const Board &board, const Move &move, const GameState &state)
     Position capturedPawnPos{ move.from.row, move.to.col };
     int capturedPawn = board.pieceAt(capturedPawnPos);
 
-    if (!isEnemyPiece(fromPiece, capturedPawn) || abs(capturedPawn) != 1)
+    if (!Piece::isEnemyPiece(fromPiece, capturedPawn) || abs(capturedPawn) != 1)
     {
         return false;
     }
@@ -217,7 +217,7 @@ bool isPawnMove(const Board &board, const Move &move)
     if (move.to.row == move.from.row + direction &&
         (move.to.col == move.from.col - 1 || move.to.col == move.from.col + 1))
     {
-        return (isEnemyPiece(fromPiece, toPiece));
+        return (Piece::isEnemyPiece(fromPiece, toPiece));
     }
 
     return false;
@@ -243,7 +243,7 @@ bool isRookMove(const Board &board, const Move &move)
         return false;
     }
     return (board.pieceAt(move.to) == EMPTY ||
-            isEnemyPiece(fromPiece, toPiece));
+            Piece::isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isBishopMove(const Board &board, const Move &move)
@@ -267,7 +267,7 @@ bool isBishopMove(const Board &board, const Move &move)
         return false;
     }
     return (board.pieceAt(move.to) == EMPTY ||
-            isEnemyPiece(fromPiece, toPiece));
+            Piece::isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isQueenMove(const Board &board, const Move &move)
@@ -288,7 +288,7 @@ bool isKnightMove(const Board &board, const Move &move)
         return false;
     }
     return (board.pieceAt(move.to) == EMPTY ||
-            isEnemyPiece(fromPiece, toPiece));
+            Piece::isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isKingMove(const Board &board, const Move &move)
@@ -305,7 +305,7 @@ bool isKingMove(const Board &board, const Move &move)
     }
 
     return (board.pieceAt(move.to) == EMPTY ||
-            isEnemyPiece(fromPiece, toPiece));
+            Piece::isEnemyPiece(fromPiece, toPiece));
 }
 
 bool isMoveLegal(const Board &board, const Move &move)

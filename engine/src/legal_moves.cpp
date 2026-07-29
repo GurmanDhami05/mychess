@@ -1,8 +1,8 @@
 #include "chess/legal_moves.h"
 #include "chess/check.h"
-#include "chess/game.h"
 #include "chess/game_state.h"
 #include "chess/move.h"
+#include "chess/piece.h"
 #include "chess/rules.h"
 #include <cstdlib>
 #include <vector>
@@ -11,7 +11,7 @@ std::vector<Position>
 getLegalMoves(Board &board, Position from, Turn side, const GameState &state)
 {
 
-    if (!isPlayerPiece(board.pieceAt(from), side))
+    if (!Piece::isPlayerPiece(board.pieceAt(from), side))
     {
         return {};
     }

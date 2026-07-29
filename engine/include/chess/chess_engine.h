@@ -26,4 +26,10 @@ class ChessEngine
     bool handleClick(int mouseX, int mouseY);
 
     void update();
+
+    void updateCastlingRights(const Move &move, int movedPiece);
+
+    void updateEnPassantTarget(const Move &move, int movedPiece);
+
+    void switchTurn();
 };

@@ -45,7 +45,7 @@ void Board::initialize()
     squares_[7][3] = 5; // w_queen
     squares_[7][4] = 6; // w_king
     squares_[7][5] = 4; // w_bishop
-    squares_[7][6] = 3; // w_knight
+    squares_[7][6] = 3; // w_knightboard
     squares_[7][7] = 2; // w_rook
 }
 
@@ -103,16 +103,16 @@ void Board::performCastle(const Move &kingMove)
 void Board::undoCastle(const Move &kingMove)
 {
     int row = kingMove.from.row;
-    undoMove(kingMove, EMPTY); // Undo the king's move
+    undoMove(kingMove, EMPTY);
 
-    if (kingMove.to.col == 6) // King-side castle
+    if (kingMove.to.col == 6)
     {
-        Move rookMove{ { row, 5 }, { row, 7 } };
+        Move rookMove{ { row, 7 }, { row, 5 } };
         undoMove(rookMove, EMPTY);
     }
-    else if (kingMove.to.col == 2) // Queen-side castle
+    else if (kingMove.to.col == 2)
     {
-        Move rookMove{ { row, 3 }, { row, 0 } };
+        Move rookMove{ { row, 0 }, { row, 3 } };
         undoMove(rookMove, EMPTY);
     }
 }

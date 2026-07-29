@@ -1,9 +1,9 @@
 #include "chess/chess_engine.h"
 #include "chess/board.h"
 #include "chess/check.h"
-#include "chess/game.h"
 #include "chess/game_state.h"
 #include "chess/legal_moves.h"
+#include "chess/piece.h"
 #include "chess/promotion.h"
 #include "chess/rules.h"
 #include <stdlib.h>
@@ -61,7 +61,7 @@ bool ChessEngine::handleClick(int mouseX, int mouseY)
 
     int piece = board_.pieceAt(clicked);
 
-    if (!isPlayerPiece(piece, turn_) && state_.selection.selected)
+    if (!Piece::isPlayerPiece(piece, turn_) && state_.selection.selected)
     {
         Move move{ state_.selection.position, clicked };
         int movedPiece = board_.pieceAt(move.from);
@@ -123,17 +123,17 @@ bool ChessEngine::handleClick(int mouseX, int mouseY)
             return false;
         }
 
-        updateCastlingRights(move, movedPiece, state_);
-        updateEnPassantTarget(move, movedPiece, state_);
+        updateCastlingRights(move, movedPiece);
+        updateEnPassantTarget(move, movedPiece);
         promotePawn(board_, move);
         state_.selection.selected = false;
         state_.legalMoves.clear();
         state_.selection.position = { -1, -1 };
-        switchTurn(turn_);
+        switchTurn();
         return true;
     }
     // if no piece is selected then first click
-    else if (isPlayerPiece(piece, turn_))
+    else if (Piece::isPlayerPiece(piece, turn_))
     {
         state_.selection.selected = true;
         state_.selection.position = clicked;
@@ -142,4 +142,62 @@ bool ChessEngine::handleClick(int mouseX, int mouseY)
     }
 
     return false;
+}
+
+void ChessEngine::updateCastlingRights(const Move &move, int movedPiece)
+{
+    if (movedPiece == 2 && move.from.row == 7 &&
+        move.from.col == 0) // White queen-side rook
+    {
+        state_.castling.whiteQueensideRookMoved = true;
+    }
+    else if (movedPiece == 2 && move.from.row == 7 &&
+             move.from.col == 7) // White king-side rook
+    {
+        state_.castling.whiteKingsideRookMoved = true;
+    }
+    else if (movedPiece == -2 && move.from.row == 0 &&
+             move.from.col == 0) // Black queen-side rook
+    {
+        state_.castling.blackQueensideRookMoved = true;
+    }
+    else if (movedPiece == -2 && move.from.row == 0 &&
+             move.from.col == 7) // Black king-side rook
+    {
+        state_.castling.blackKingsideRookMoved = true;
+    }
+
+    if (movedPiece == 6) // White king
+    {
+        state_.castling.whiteKingMoved = true;
+    }
+    else if (movedPiece == -6) // Black king
+    {
+        state_.castling.blackKingMoved = true;
+    }
+}
+
+void ChessEngine::updateEnPassantTarget(const Move &move, int movedPiece)
+{
+    if (abs(movedPiece) == 1 && abs(move.to.row - move.from.row) == 2)
+    {
+        state_.enPassantTarget.row = (move.from.row + move.to.row) / 2;
+        state_.enPassantTarget.col = move.from.col;
+    }
+    else
+    {
+        state_.enPassantTarget = { -1, -1 };
+    }
+}
+
+void ChessEngine::switchTurn()
+{
+    if (turn_ == Turn::White)
+    {
+        turn_ = Turn::Black;
+    }
+    else
+    {
+        turn_ = Turn::White;
+    }
 }

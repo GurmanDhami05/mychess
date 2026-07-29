@@ -1,7 +1,7 @@
 #include "chess/checkmate.h"
 #include "chess/check.h"
-#include "chess/game.h"
 #include "chess/move.h"
+#include "chess/piece.h"
 #include "chess/rules.h"
 
 bool hasLegalMove(Board &board, Turn side)
@@ -11,7 +11,7 @@ bool hasLegalMove(Board &board, Turn side)
         for (int col = 0; col < BOARD_SIZE; ++col)
         {
             int piece = board.pieceAt({ row, col });
-            if (isPlayerPiece(piece, side))
+            if (Piece::isPlayerPiece(piece, side))
             {
                 for (int toRow = 0; toRow < BOARD_SIZE; ++toRow)
                 {
