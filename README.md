@@ -80,8 +80,8 @@ cmake --build build
 - [ ] Promotion piece selection
 - [x] Move highlighting
 - [x] Legal move indicators
-- [ ] Move history
-- [ ] Undo / Redo
+- [x] Move history
+- [x] Undo
 
 ### User Interface
 

@@ -7,6 +7,7 @@
 #include "chess/piece.h"
 #include "chess/promotion.h"
 #include "chess/rules.h"
+#include <iostream>
 #include <stdlib.h>
 
 ChessEngine::ChessEngine()
@@ -62,6 +63,7 @@ bool ChessEngine::handleClick(Position clicked)
         if (tryMove(info))
         {
             finishMove(info);
+            moveHistory_.push_back(info);
             return true;
         }
         return false;
@@ -130,7 +132,9 @@ bool ChessEngine::tryMove(MoveInfo &info)
 {
 
     info.movedPiece = board_.pieceAt(info.move.from);
-    ;
+
+    info.previousCastlingRights = state_.castling;
+    info.previousEnPassantTarget = state_.enPassantTarget;
 
     if (abs(info.movedPiece) == 6)
     {
@@ -196,13 +200,52 @@ void ChessEngine::selectPiece(const Position pos)
     state_.legalMoves = getLegalMoves(board_, pos, turn_, state_);
 }
 
-void ChessEngine::finishMove(const MoveInfo &info)
+void ChessEngine::finishMove(MoveInfo &info)
 {
     updateCastlingRights(info.move, info.movedPiece);
     updateEnPassantTarget(info.move, info.movedPiece);
-    promotePawn(board_, info.move);
+    info.promotion = promotePawn(board_, info.move);
     state_.selection.selected = false;
     state_.legalMoves.clear();
     state_.selection.position = { -1, -1 };
     switchTurn();
+}
+
+void ChessEngine::undoLastMove()
+{
+    if (moveHistory_.empty())
+    {
+        return;
+    }
+
+    MoveInfo lastMove = moveHistory_.back();
+    moveHistory_.pop_back();
+
+    if (lastMove.castling)
+    {
+        board_.undoCastle(lastMove.move);
+    }
+    else if (lastMove.enPassant)
+    {
+        board_.undoEnPassant(lastMove.move, lastMove.capturedPiece);
+    }
+    else
+    {
+        board_.undoMove(lastMove.move, lastMove.capturedPiece);
+    }
+    if (lastMove.promotion)
+    {
+        board_.setPiece(lastMove.move.from, lastMove.movedPiece);
+    }
+
+    state_.castling = lastMove.previousCastlingRights;
+    state_.enPassantTarget = lastMove.previousEnPassantTarget;
+
+    switchTurn();
+
+    state_.selection.selected = false;
+    state_.selection.position = { -1, -1 };
+    state_.legalMoves.clear();
+
+    update();
 }

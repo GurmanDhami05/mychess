@@ -62,6 +62,15 @@ void Game::handleEvents()
             running_ = false;
         }
 
+        if (event_.type == SDL_KEYDOWN)
+        {
+            if ((SDL_GetModState() & KMOD_CTRL) &&
+                event_.key.keysym.sym == SDLK_z)
+            {
+                engine_.undoLastMove();
+            }
+        }
+
         if (event_.type == SDL_MOUSEBUTTONDOWN &&
             event_.button.button == SDL_BUTTON_LEFT)
         {

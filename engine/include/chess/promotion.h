@@ -2,4 +2,4 @@
 #include "chess/board.h"
 #include "chess/move.h"
 
-void promotePawn(Board &board, const Move &move);
+bool promotePawn(Board &board, const Move &move);

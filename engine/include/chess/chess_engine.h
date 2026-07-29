@@ -4,6 +4,7 @@
 #include "chess/game_state.h"
 #include "chess/move_info.h"
 #include "chess/turn.h"
+#include <vector>
 
 class ChessEngine
 {
@@ -11,6 +12,8 @@ class ChessEngine
     Board board_;
     GameState state_;
     Turn turn_;
+
+    std::vector<MoveInfo> moveHistory_;
 
   public:
     ChessEngine();
@@ -35,5 +38,7 @@ class ChessEngine
 
     bool tryMove(MoveInfo &info);
     void selectPiece(const Position pos);
-    void finishMove(const MoveInfo &info);
+    void finishMove(MoveInfo &info);
+
+    void undoLastMove();
 };
