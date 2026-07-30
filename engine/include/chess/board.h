@@ -12,6 +12,8 @@ class Board
   public:
     Board();
 
+    void clear();
+
     int pieceAt(const Position &pos) const;
 
     void setPiece(const Position &pos, int piece);

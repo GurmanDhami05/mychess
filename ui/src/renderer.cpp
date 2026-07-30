@@ -1,6 +1,4 @@
 #include "renderer.h"
-#include "chess/game_state.h"
-#include "chess/piece_selected.h"
 #include "piece_mapper.h"
 #include <iostream>
 
@@ -59,27 +57,27 @@ void drawThickHollowCircle(
 
 void render(SDL_Renderer *renderer,
             const Textures &textures,
-            const Board &board,
-            const GameState &state)
+            const ChessEngine &engine,
+            const UIState &uiState)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     // drawing chess board
-    drawBoard(renderer, state);
-    drawLegalMoves(renderer, state, board);
-    drawPieces(renderer, textures, board);
+    drawBoard(renderer, engine.state(), uiState);
+    drawLegalMoves(renderer, engine.state(), engine.board(), uiState);
+    drawPieces(renderer, textures, engine.board());
 
     static bool printed = false;
 
     if (!printed)
     {
-        if (state.checkmate)
+        if (engine.state().checkmate)
         {
             std::cout << "Checkmate!\n";
             printed = true;
         }
-        else if (state.stalemate)
+        else if (engine.state().stalemate)
         {
             std::cout << "Stalemate!\n";
             printed = true;
@@ -89,15 +87,17 @@ void render(SDL_Renderer *renderer,
     SDL_RenderPresent(renderer);
 }
 
-void drawBoard(SDL_Renderer *renderer, const GameState &state)
+void drawBoard(SDL_Renderer *renderer,
+               const GameState &state,
+               const UIState &uiState)
 {
     for (int row = 0; row < BOARD_SIZE; row++)
     {
         for (int col = 0; col < BOARD_SIZE; col++)
         {
-            bool isSelected = state.selection.selected &&
-                              row == state.selection.position.row &&
-                              col == state.selection.position.col;
+            bool isSelected = uiState.selection.selected &&
+                              row == uiState.selection.position.row &&
+                              col == uiState.selection.position.col;
             bool isWhiteKingSquare = state.whiteKing.inCheck &&
                                      row == state.whiteKing.position.row &&
                                      col == state.whiteKing.position.col;
@@ -181,12 +181,13 @@ void drawPieces(SDL_Renderer *renderer,
 
 void drawLegalMoves(SDL_Renderer *renderer,
                     const GameState &state,
-                    const Board &board)
+                    const Board &board,
+                    const UIState &uiState)
 {
     SDL_SetRenderDrawBlendMode(renderer,
                                SDL_BLENDMODE_BLEND); // needed for alpha to work
 
-    for (const Position &pos : state.legalMoves)
+    for (const Position &pos : uiState.legalMoves)
     {
         int centerX = pos.col * TILE_SIZE + TILE_SIZE / 2;
         int centerY = pos.row * TILE_SIZE + TILE_SIZE / 2;

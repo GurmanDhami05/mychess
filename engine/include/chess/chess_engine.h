@@ -4,6 +4,7 @@
 #include "chess/game_state.h"
 #include "chess/move_info.h"
 #include "chess/turn.h"
+#include <string>
 #include <vector>
 
 class ChessEngine

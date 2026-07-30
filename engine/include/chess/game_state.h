@@ -1,9 +1,7 @@
 #pragma once
 #include "chess/board.h"
-#include "chess/piece_selected.h"
 #include "chess/position.h"
 #include "chess/turn.h"
-#include <vector>
 
 struct KingState
 {
@@ -22,12 +20,41 @@ struct CastlingRights
 
     bool blackKingsideRookMoved = false;
     bool blackQueensideRookMoved = false;
+
+    [[nodiscard]] bool whiteCanCastleKingside() const
+    {
+        return !whiteKingMoved && !whiteKingsideRookMoved;
+    }
+
+    [[nodiscard]] bool whiteCanCastleQueenside() const
+    {
+        return !whiteKingMoved && !whiteQueensideRookMoved;
+    }
+
+    [[nodiscard]] bool blackCanCastleKingside() const
+    {
+        return !blackKingMoved && !blackKingsideRookMoved;
+    }
+
+    [[nodiscard]] bool blackCanCastleQueenside() const
+    {
+        return !blackKingMoved && !blackQueensideRookMoved;
+    }
+
+    void reset()
+    {
+        whiteKingMoved = true;
+        whiteKingsideRookMoved = true;
+        whiteQueensideRookMoved = true;
+
+        blackKingMoved = true;
+        blackKingsideRookMoved = true;
+        blackQueensideRookMoved = true;
+    }
 };
 
 struct GameState
 {
-    PieceSelected selection;
-
     KingState whiteKing;
     KingState blackKing;
 
@@ -35,10 +62,13 @@ struct GameState
     bool stalemate = false;
 
     CastlingRights castling;
-
     Position enPassantTarget = { -1, -1 };
 
-    std::vector<Position> legalMoves;
+    int halfMoveClock = 0;
+    int fullMoveNumber = 1;
+
+    int previousHalfMoveClock;
+    int previousFullMoveNumber;
 };
 
 void updateGameState(GameState &state, Board &board, Turn currentTurn);

@@ -6,4 +6,7 @@ struct Move
 {
     Position from;
     Position to;
+
+    int previousHalfMoveClock;
+    int previousFullMoveNumber;
 };

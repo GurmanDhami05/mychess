@@ -2,7 +2,6 @@
 #include "chess/board.h"
 #include "chess/check.h"
 #include "chess/game_state.h"
-#include "chess/legal_moves.h"
 #include "chess/move_info.h"
 #include "chess/piece.h"
 #include "chess/promotion.h"
@@ -43,35 +42,6 @@ Turn ChessEngine::turn() const
 void ChessEngine::update()
 {
     updateGameState(state_, board_, turn_);
-}
-
-bool ChessEngine::handleClick(Position clicked)
-{
-
-    if (state_.checkmate || state_.stalemate)
-    {
-        return false;
-    }
-
-    int piece = board_.pieceAt(clicked);
-
-    if (!Piece::isPlayerPiece(piece, turn_) && state_.selection.selected)
-    {
-        MoveInfo info{ Move{ state_.selection.position, clicked } };
-
-        if (makeMove(info.move))
-        {
-            return true;
-        }
-        return false;
-    }
-    // if no piece is selected then first click
-    else if (Piece::isPlayerPiece(piece, turn_))
-    {
-        selectPiece(clicked);
-    }
-
-    return false;
 }
 
 void ChessEngine::updateCastlingRights(const Move &move, int movedPiece)
@@ -189,22 +159,27 @@ bool ChessEngine::tryMove(MoveInfo &info)
     return true;
 }
 
-void ChessEngine::selectPiece(const Position pos)
-{
-    state_.selection.selected = true;
-    state_.selection.position = pos;
-
-    state_.legalMoves = getLegalMoves(board_, pos, turn_, state_);
-}
-
 void ChessEngine::finishMove(MoveInfo &info)
 {
+    info.previousHalfMoveClock = state_.halfMoveClock;
+    info.previousFullMoveNumber = state_.fullMoveNumber;
+    if (info.capturedPiece != Piece::None ||
+        std::abs(info.movedPiece) == Piece::WhitePawn)
+    {
+        state_.halfMoveClock = 0;
+    }
+    else
+    {
+        ++state_.halfMoveClock;
+    }
+
+    if (turn_ == Turn::Black)
+    {
+        ++state_.fullMoveNumber;
+    }
     updateCastlingRights(info.move, info.movedPiece);
     updateEnPassantTarget(info.move, info.movedPiece);
     info.promotion = promotePawn(board_, info.move);
-    state_.selection.selected = false;
-    state_.legalMoves.clear();
-    state_.selection.position = { -1, -1 };
     switchTurn();
 }
 
@@ -237,12 +212,10 @@ void ChessEngine::undoLastMove()
 
     state_.castling = lastMove.previousCastlingRights;
     state_.enPassantTarget = lastMove.previousEnPassantTarget;
+    state_.halfMoveClock = lastMove.previousHalfMoveClock;
+    state_.fullMoveNumber = lastMove.previousFullMoveNumber;
 
     switchTurn();
-
-    state_.selection.selected = false;
-    state_.selection.position = { -1, -1 };
-    state_.legalMoves.clear();
 
     update();
 }

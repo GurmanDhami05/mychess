@@ -22,4 +22,7 @@ struct MoveInfo
     Position previousEnPassantTarget;
 
     bool promotion = false;
+
+    int previousHalfMoveClock;
+    int previousFullMoveNumber;
 };
