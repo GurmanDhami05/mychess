@@ -4,8 +4,9 @@
 #include <sstream>
 #include <stdexcept>
 
-std::string
-FEN::exportFEN(const Board &board, Turn turn, const GameState &state)
+namespace FEN
+{
+std::string exportFEN(const Board &board, Turn turn, const GameState &state)
 {
     std::string fen;
     for (int row = 0; row < BOARD_SIZE; ++row)
@@ -79,76 +80,7 @@ FEN::exportFEN(const Board &board, Turn turn, const GameState &state)
     return fen;
 }
 
-char pieceToFenChar(int piece)
-{
-    switch (piece)
-    {
-    case Piece::WhitePawn:
-        return 'P';
-    case Piece::WhiteKnight:
-        return 'N';
-    case Piece::WhiteBishop:
-        return 'B';
-    case Piece::WhiteRook:
-        return 'R';
-    case Piece::WhiteQueen:
-        return 'Q';
-    case Piece::WhiteKing:
-        return 'K';
-    case Piece::BlackPawn:
-        return 'p';
-    case Piece::BlackKnight:
-        return 'n';
-    case Piece::BlackBishop:
-        return 'b';
-    case Piece::BlackRook:
-        return 'r';
-    case Piece::BlackQueen:
-        return 'q';
-    case Piece::BlackKing:
-        return 'k';
-    default:
-        throw std::runtime_error("Invalid piece value");
-    }
-}
-
-int fenCharToPiece(char c)
-{
-    switch (c)
-    {
-    case 'P':
-        return Piece::WhitePawn;
-    case 'N':
-        return Piece::WhiteKnight;
-    case 'B':
-        return Piece::WhiteBishop;
-    case 'R':
-        return Piece::WhiteRook;
-    case 'Q':
-        return Piece::WhiteQueen;
-    case 'K':
-        return Piece::WhiteKing;
-    case 'p':
-        return Piece::BlackPawn;
-    case 'n':
-        return Piece::BlackKnight;
-    case 'b':
-        return Piece::BlackBishop;
-    case 'r':
-        return Piece::BlackRook;
-    case 'q':
-        return Piece::BlackQueen;
-    case 'k':
-        return Piece::BlackKing;
-    default:
-        throw std::runtime_error("Invalid FEN character");
-    }
-}
-
-bool FEN::loadFEN(Board &board,
-                  Turn &turn,
-                  GameState &state,
-                  const std::string &fen)
+bool loadFEN(Board &board, Turn &turn, GameState &state, const std::string &fen)
 {
 
     board.clear();
@@ -294,4 +226,72 @@ bool FEN::loadFEN(Board &board,
     state.fullMoveNumber = fullMoveNumber;
 
     return true;
+}
+
+}; // namespace FEN
+
+char pieceToFenChar(int piece)
+{
+    switch (piece)
+    {
+    case Piece::WhitePawn:
+        return 'P';
+    case Piece::WhiteKnight:
+        return 'N';
+    case Piece::WhiteBishop:
+        return 'B';
+    case Piece::WhiteRook:
+        return 'R';
+    case Piece::WhiteQueen:
+        return 'Q';
+    case Piece::WhiteKing:
+        return 'K';
+    case Piece::BlackPawn:
+        return 'p';
+    case Piece::BlackKnight:
+        return 'n';
+    case Piece::BlackBishop:
+        return 'b';
+    case Piece::BlackRook:
+        return 'r';
+    case Piece::BlackQueen:
+        return 'q';
+    case Piece::BlackKing:
+        return 'k';
+    default:
+        throw std::runtime_error("Invalid piece value");
+    }
+}
+
+int fenCharToPiece(char c)
+{
+    switch (c)
+    {
+    case 'P':
+        return Piece::WhitePawn;
+    case 'N':
+        return Piece::WhiteKnight;
+    case 'B':
+        return Piece::WhiteBishop;
+    case 'R':
+        return Piece::WhiteRook;
+    case 'Q':
+        return Piece::WhiteQueen;
+    case 'K':
+        return Piece::WhiteKing;
+    case 'p':
+        return Piece::BlackPawn;
+    case 'n':
+        return Piece::BlackKnight;
+    case 'b':
+        return Piece::BlackBishop;
+    case 'r':
+        return Piece::BlackRook;
+    case 'q':
+        return Piece::BlackQueen;
+    case 'k':
+        return Piece::BlackKing;
+    default:
+        throw std::runtime_error("Invalid FEN character");
+    }
 }

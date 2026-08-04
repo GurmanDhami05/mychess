@@ -70,6 +70,9 @@ enable_testing()
 add_executable(chess_tests
 
     tests/test_fen.cpp
+    tests/test_board.cpp
+    tests/test_rules.cpp
+    tests/test_engine.cpp
 )
 
 target_link_libraries(chess_tests

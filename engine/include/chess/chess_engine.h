@@ -11,6 +11,8 @@ class ChessEngine
 {
   private:
     Board board_;
+    mutable Board scratchBoard_;
+
     GameState state_;
     Turn turn_;
 
@@ -20,10 +22,8 @@ class ChessEngine
     ChessEngine();
 
     const Board &board() const;
-    Board &board();
 
     const GameState &state() const;
-    GameState &state();
 
     Turn turn() const;
 
@@ -41,7 +41,17 @@ class ChessEngine
     void selectPiece(const Position pos);
     void finishMove(MoveInfo &info);
 
+    int pieceAt(const Position &pos) const;
+
     void undoLastMove();
 
     bool makeMove(const Move &move);
+
+    std::vector<Position> legalMoves(Position from) const;
+
+    std::vector<Move> legalMoves() const;
+
+    bool loadFEN(const std::string &fen);
+
+    std::string exportFEN() const;
 };

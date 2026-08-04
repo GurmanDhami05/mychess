@@ -1,9 +1,7 @@
 #include "game.h"
-#include "chess/legal_moves.h"
 #include "chess/piece.h"
 #include "renderer.h"
 #include "sdl.h"
-#include <iostream>
 
 Game::~Game()
 {
@@ -148,8 +146,7 @@ void Game::selectPiece(const Position pos)
     uiState_.selection.selected = true;
     uiState_.selection.position = pos;
 
-    uiState_.legalMoves =
-        getLegalMoves(engine_.board(), pos, engine_.turn(), engine_.state());
+    uiState_.legalMoves = engine_.legalMoves(pos);
 }
 
 void Game::clearSelection()

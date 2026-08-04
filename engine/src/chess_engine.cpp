@@ -1,7 +1,9 @@
 #include "chess/chess_engine.h"
 #include "chess/board.h"
 #include "chess/check.h"
+#include "chess/fen.h"
 #include "chess/game_state.h"
+#include "chess/legal_moves.h"
 #include "chess/move_info.h"
 #include "chess/piece.h"
 #include "chess/promotion.h"
@@ -19,17 +21,7 @@ const Board &ChessEngine::board() const
     return board_;
 }
 
-Board &ChessEngine::board()
-{
-    return board_;
-}
-
 const GameState &ChessEngine::state() const
-{
-    return state_;
-}
-
-GameState &ChessEngine::state()
 {
     return state_;
 }
@@ -227,7 +219,40 @@ bool ChessEngine::makeMove(const Move &move)
     {
         finishMove(info);
         moveHistory_.push_back(info);
+        update();
         return true;
     }
     return false;
+}
+
+int ChessEngine::pieceAt(const Position &pos) const
+{
+    return board_.pieceAt(pos);
+}
+
+bool ChessEngine::loadFEN(const std::string &fen)
+{
+    if (!FEN::loadFEN(board_, turn_, state_, fen))
+    {
+        return false;
+    }
+    update();
+    return true;
+}
+
+std::string ChessEngine::exportFEN() const
+{
+    return FEN::exportFEN(board_, turn_, state_);
+}
+
+std::vector<Position> ChessEngine::legalMoves(Position from) const
+{
+    scratchBoard_ = board_;
+    return ::getLegalMoves(scratchBoard_, from, turn_, state_);
+}
+
+std::vector<Move> ChessEngine::legalMoves() const
+{
+    scratchBoard_ = board_;
+    return ::getAllLegalMoves(scratchBoard_, turn_, state_);
 }

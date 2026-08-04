@@ -1,6 +1,5 @@
 #include "chess/perft.h"
 #include "chess/chess_engine.h"
-#include "chess/legal_moves.h"
 #include <iostream>
 #include <string>
 
@@ -21,8 +20,7 @@ uint64_t perft(ChessEngine &engine, int depth)
         return 1;
     }
     uint64_t nodes = 0;
-    auto moves =
-        getAllLegalMoves(engine.board(), engine.turn(), engine.state());
+    auto moves = engine.legalMoves();
 
     for (const Move &move : moves)
     {
@@ -44,8 +42,7 @@ uint64_t perftDivide(ChessEngine &engine, int depth)
         return 1;
     }
     uint64_t nodes = 0;
-    auto moves =
-        getAllLegalMoves(engine.board(), engine.turn(), engine.state());
+    auto moves = engine.legalMoves();
 
     for (const Move &move : moves)
     {

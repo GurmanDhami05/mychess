@@ -11,4 +11,6 @@ struct Position
     {
         return row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
     }
+
+    bool operator==(const Position &other) const = default;
 };
